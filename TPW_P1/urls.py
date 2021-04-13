@@ -4,15 +4,18 @@ from TechSekai import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     path('', views.home, name='home'),
+    path('topseller', views.topseller, name='topseller'),
+    path('newarrival', views.newarrival, name='newarrival')
 
-    path('login/<str:accountType>/', views.login, name='login'),
-    path('account/', views.account, name='account'),
-    path('logout/', views.logout, name='logout'),
+    # path('login/<str:accountType>/', views.login, name='login'),
+    # path('account/', views.account, name='account'),
+    # path('logout/', views.logout, name='logout'),
 
-    path('shopcart/', views.shopcart, name='shopcart'),
-    path('wishlist', views.wishlist, name='wishlist'),
+    #path('shopcart/', views.shopcart, name='shopcart'),
+    #path('wishlist', views.wishlist, name='wishlist'),
 
-    path('add/<str:pType>/', views.addProduct, name='addProduct'),
-    path('edit/<int:pID>/', views.editProduct, name='editProduct'),
+    #path('add/<str:pType>/', views.addProduct, name='addProduct'),
+    #path('edit/<int:pID>/', views.editProduct, name='editProduct'),
 ]
