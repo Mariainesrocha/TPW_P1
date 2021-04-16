@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.contrib.auth import models as auth_models
 
 GENDER = [
     ('M', 'Male'),
@@ -13,16 +14,19 @@ ROLES = [
     ('S', 'Shop')
 ]
 
-ORDER_STATE = [ #TODO: VER CODIGOS A APLICAR
-    ('PROC', 'Processing order'),
-    ('DELIV', 'Sent to delivery'),
-    ('SENT', 'On its way'),
-    ('REC', 'Delivered at the address')
+ORDER_STATE = [
+    ('ORDERED', 'Processing order'),
+    ('DISPATCHED', 'Sent to delivery'),
+    ('IN TRANSIT', 'On the way'),
+    ('DELIVERED', 'Delivered at the destination address'),
+    ('REFUND', 'Pay back to a non satisfied client'),
+    ('FAILED', 'Error with the destination address, must contact us')
 ]
 
 PAYMENT_METHOD = [
     ('Credit Card', 'Credit Card'),
-    ('PayPal', 'PayPal')
+    ('PayPal', 'PayPal'),
+    ('ATM ', 'ATM')
 ]
 
 
@@ -36,61 +40,77 @@ class Address(models.Model):
 
 
 class User(models.Model):
+    django_user = models.OneToOneField(auth_models.User, on_delete=models.CASCADE)  #TODO: CONFIRMAR!!!!!!!!!!!!!!!!
     email = models.EmailField(max_length=35, primary_key=True, null=False)  #nota: tag primary_key define que esta é a PK e não um id
     name = models.CharField(max_length=40, null=False)
     gender = models.CharField(choices=GENDER, max_length=20)
-    age = models.PositiveIntegerField(max_length=3, null=False, validators=[MaxValueValidator(100), MinValueValidator(1)])  #TODO: LIMITAR PRA MAIORES DE 16???
-    phone_number = models.PositiveIntegerField(max_length=16)
-    role = models.CharField(max_length=10,choices=ROLES)
+    age = models.PositiveIntegerField(null=False, validators=[MaxValueValidator(100), MinValueValidator(1)])
+    phone_number = models.PositiveBigIntegerField()
+    profile_pic = models.ImageField()
+    role = models.CharField(max_length=10, choices=ROLES)
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
-    
+
+
 class Shop(models.Model):
     name = models.CharField(max_length=40, null=False)
-    owner = models.CharField(max_length=40, null=False)
-    email = models.EmailField(max_length=35)
-    phone_number = models.PositiveIntegerField(max_length=16)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    email = models.EmailField(max_length=35, null=False, primary_key=True)
+    phone_number = models.PositiveBigIntegerField()
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     website = models.URLField(max_length=40)
-    opening_hours = models.TimeField()
+    opening_hours = models.TimeField(null=True)
     certified = models.BooleanField(null=False)
+    image = models.ImageField(null=True)
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=50, null=False)
+    name = models.CharField(max_length=50, null=False, primary_key=True)
     totDevices = models.IntegerField()
 
 
-class Product(models.Model):
+class Brand(models.Model):
     brand = models.CharField(max_length=50)
+
+
+class Product(models.Model):
+    reference_number = models.PositiveBigIntegerField(null=False)
     name = models.CharField(max_length=50, null=False)
     details = models.TextField(max_length=300)
     warehouse = models.CharField(max_length=50, null=False)
-    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
 
 
 class Item(models.Model):
     price = models.PositiveIntegerField(null=False)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
 
 
 class Cart(models.Model):
-    quantity = models.PositiveIntegerField(max_length=5, null=False)
+    quantity = models.PositiveIntegerField(null=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    items = models.ManyToManyField(Item)
     total_price = models.PositiveIntegerField(null=False)
 
 
 class WishList(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    items = models.ManyToManyField(Item)
 
 
 class Order(models.Model):
-    quantity = models.PositiveIntegerField(max_length=5, null=False)
+    quantity = models.PositiveIntegerField(null=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    items = models.ManyToManyField(Item)
     total_price = models.PositiveIntegerField(null=False)
     order_state = models.CharField(max_length=20, choices=ORDER_STATE)
     payment_meth = models.CharField(max_length=20, choices=PAYMENT_METHOD)
 
+
+################################## LINKS Q PODEM VIR A SER UTEIS
+'''
+https://stackoverflow.com/questions/28712848/composite-primary-key-in-django
+https://realpython.com/manage-users-in-django-admin/#model-permissions
+https://docs.djangoproject.com/en/dev/ref/django-admin/#sqlclear-appname-appname
+'''

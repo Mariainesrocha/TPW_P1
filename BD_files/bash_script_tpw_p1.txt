@@ -1,0 +1,231 @@
+## NOTE: SCRIPT TO POPULATE THE BD EVERYTIME WITH NEED TO DELETE ALL DATA
+
+# STEPS
+
+# 1st run: python3 manage.py shell
+# 2nd import models: from TechSekai.models import *
+# 3rd add data
+
+
+## PROBLEMAS -> N SEI COMO METER UMA PK COMPOSTAAA
+
+----------------------------------- Address
+a1 = Address(country='Portugal', city='Aveiro', zip_code='3950-087',street='Rua de Ovar',door=128, floor=1) 
+a2 = Address(country='Portugal', city='Águeda', zip_code='3850-116',street='Rua dos chapéus coloridos',door=210, floor=3) 
+a3 = Address(country='Portugal', city='Anadia', zip_code='3780-083',street='Rua das Roseiras',door=500, floor=0)
+a4 = Address(country='Espanha', city='Málaga', zip_code='1200-111',street='Calle de las pelotas', door=5, floor=2) 
+a5 = Address(country='Espanha', city='Salamanca', zip_code='1200-002',street='Las palomitas rojas',door=308, floor=7) 
+a6 = Address(country='Portugal', city='Coimbra', zip_code='4000-321',street='Rua do Comércio',door=801, floor=5) 
+a7 = Address(country='Portugal', city='Évora', zip_code='1233-083',street='Rua do Carmo',door=12, floor=1) 
+a8 = Address(country='Portugal', city='Montalegre', zip_code='3333-987',street='Rua da Prata',door=56, floor=2) 
+a9 = Address(country='Portugal', city='Porto', zip_code='3443-458',street='Rua das Taipas',door=420, floor=3) 
+a10 = Address(country='Portugal', city='Gaia', zip_code='3234-607',street='Rua de Santa Catarina',door=55, floor=0) 
+a11 = Address(country='Portugal', city='Lisboa', zip_code='5780-679',street='Rua Garret',door=760, floor=0) 
+a12 = Address(country='Portugal', city='Covilhã', zip_code='6756-545',street='Rua da Estação',door=930, floor=4) 
+a13 = Address(country='Portugal', city='Tomar', zip_code='1240-034',street='Rua do Mercado',door=444, floor=1) 
+a14 = Address(country='Portugal', city='Monchique', zip_code='4566-345',street='Rua do Bairro Novo',door=111, floor=2) 
+a15 = Address(country='Portugal', city='Esmoriz', zip_code='6798-123',street='Rua Sao Sebastiao',door=222, floor=3) 
+
+
+a1.save()
+a2.save()
+a3.save()
+a4.save()
+a5.save()
+a7.save()
+a6.save()
+a8.save()
+a9.save()
+a10.save()
+a11.save()
+a12.save()
+a13.save()
+a14.save()
+a15.save()
+########################################################################################################################################
+
+----------------------------------- Category
+obj1 = Category(name='TVs',totDevices=0)
+obj2 = Category(name='Phones',totDevices=0)
+obj3 = Category(name='Drones',totDevices=0)
+obj4 = Category(name='Accessories',totDevices=0)
+obj5 = Category(name='Sound Devices',totDevices=0)
+obj6 = Category(name='Smartwatches',totDevices=0)
+obj7 = Category(name='Laptops',totDevices=0)
+obj8 = Category(name='Storage Devices',totDevices=0)
+obj9 = Category(name='Components adn Peripherals',totDevices=0)
+obj10 = Category(name='Tablets',totDevices=0) 
+obj11 = Category(name='Cameras',totDevices=0)
+obj12 = Category(name='Printers',totDevices=0)
+obj13 = Category(name='Videogames',totDevices=0)
+obj14 = Category(name='VR/AR Devices',totDevices=0)
+obj15 = Category(name='Smart Home Devices',totDevices=0)
+
+
+obj1.save()
+obj2.save()
+obj3.save()
+obj4.save()
+obj5.save()
+obj7.save()
+obj6.save()
+obj8.save()
+obj9.save()
+obj10.save()
+obj11.save()
+obj12.save()
+obj13.save()
+obj14.save()
+obj15.save()
+########################################################################################################################################
+
+------------------------------------ BRANDS
+
+obj1 = Brand(brand='Samsung')
+obj2 = Brand(brand='Sony')
+obj3 = Brand(brand='Xiaomi')
+obj4 = Brand(brand='Nintendo')
+obj5 = Brand(brand='HP')
+obj6 = Brand(brand='Lenovo')
+obj7 = Brand(brand='Apple')
+obj8 = Brand(brand='LG')
+obj9 = Brand(brand='Canon')
+obj10 = Brand(brand='GoPro')
+obj11 = Brand(brand='SanDisk')
+obj12 = Brand(brand='DELL')
+obj13 = Brand(brand='Nvidia')
+obj14 = Brand(brand='Toshiba')
+obj15 = Brand(brand='Cisco Systems')
+obj16 = Brand(brand='Qualcomm')
+obj17 = Brand(brand='Microsoft')
+obj18 = Brand(brand='JBL')
+
+obj1.save()
+obj2.save()
+obj3.save()
+obj4.save()
+obj5.save()
+obj7.save()
+obj6.save()
+obj8.save()
+obj9.save()
+obj10.save()
+obj11.save()
+obj12.save()
+obj13.save()
+obj14.save()
+obj15.save()
+obj16.save()
+obj17.save()
+obj18.save()
+########################################################################################################################################
+
+
+------------------------------------ PRODS
+obj1 = Product(reference_number=123455, name='iPhone X',details='Color: White,RAM: 3GB, SO: iOS, Storage:64GB, Battery: 2176 mAh, Screen-size:5.8', warehouse='US Apple warehouse')
+
+c1 = Category.objects.get(name="Phones")
+b1 = Brand.objects.get(brand="Apple")
+obj1.category = c1
+obj1.brand = b1
+
+
+obj2 = Product(reference_number=11111, name='iPhone 5',details='Color: Silver,RAM: 3GB, SO: iOS, Storage:32GB, Battery: 1500 mAh, Screen-size:3.8', warehouse='US Apple warehouse')
+
+c1 = Category.objects.get(name="Phones")
+b1 = Brand.objects.get(brand="Apple")
+obj2.category = c1
+obj2.brand = b1
+
+
+obj3 = Product(reference_number=1222222, name='Smart TV 4K', details='Color: Black, SO: webOS, Diagonal Screen-size:165 cm', warehouse='LG Eletronics Portugal S.A.')
+
+c3 = Category.objects.get(name="TVs")
+b3 = Brand.objects.get(brand="LG")
+obj3.category = c3
+obj3.brand = b3
+
+obj4 = Product(reference_number=13333, name='Smart TV', details='Color: Silver, SO: Tizen, Diagonal Screen-size:191 cm', warehouse='Samsung Electronics Japan')
+
+c4 = Category.objects.get(name="TVs")
+b4 = Brand.objects.get(brand="Samsung")
+obj4.category = c4
+obj4.brand = b4
+
+
+obj1.save()
+obj2.save()
+obj3.save()
+obj4.save()
+
+
+ACABAAR----
+########################################################################################################################################
+
+------------------------------------ USER
+>>> from django.contrib.auth.models import User as DjangoU
+
+
+obj1 = User(email='anasimoes@gmail.com',name='Ana Simoes', gender='F', age=19, phone_number=966789098, role='C')
+
+dju = DjangoU.objects.create_user(username='anasimoes@gmail.com', password='secret')
+obj1.django_user = dju
+a1  = Address.objects.get(city='Anadia')
+obj1.address = a1
+
+obj1.save()
+
+
+obj2 = User(email='luis_cepeda@mail.com',name='Luis Cepeda', gender='M', age=32, phone_number=987234568, role='S')
+dju2 = DjangoU.objects.create_user(username='luis_cepeda@mail.com', password='superSecret')
+obj2.django_user = dju2
+a2  = Address.objects.get(city='Salamanca')
+obj2.address = a2
+
+obj2.save()
+
+########################################################################################################################################
+
+----------------------------------- SHOP
+obj1 = Shop(email='tech4U@mail.com',name='Tech4U', phone_number=987234568, certified=0)
+u1 = User.objects.get(email='luis_cepeda@mail.com')
+
+a1  = Address.objects.get(city='Málaga')
+obj1.address = a1
+obj1.owner = u1
+
+obj1.save()
+
+########################################################################################################################################
+
+----------------------------------- ITEM
+s1  = Shop.objects.get(name='Tech4U')
+p1  = Product.objects.get(name='iPhone 5')
+obj1 = Item(price=350, shop=s1,product=p1)
+obj1.save()
+
+########################################################################################################################################
+
+------------------------------------ Cart
+u1  = User.objects.get(email='anasimoes@gmail.com')
+i1  = Item.objects.get(id=1)
+
+obj1 = Cart(quantity=1, total_price=350, user=u1)
+
+obj1.save()
+
+## ACABAR A PARTE DE ADICIONAR SETS AINDA N VI COMO FAZER
+
+########################################################################################################################################
+
+----------------------------------- Order
+
+
+
+########################################################################################################################################
+
+----------------------------------- WishList
+
+
+
+########################################################################################################################################
