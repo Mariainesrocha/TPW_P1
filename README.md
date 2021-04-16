@@ -1,7 +1,8 @@
 # TPW_P1
 
-Projeto em Django realizado no âmbito de **Tecnologias e Programação Web** (2º semestre - 3º ano)
+Projeto em Django realizado no âmbito de **Tecnologias e Programação Web** (3º ano - 2º semestre)
 
+Tema : <Loja de Compras>
 
 ### Equipa de desenvolvimento:
       > Fábio Carmelino
