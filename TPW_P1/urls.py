@@ -4,19 +4,21 @@ from TechSekai import views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('', views.home, name='home'),
     path('admin/', admin.site.urls),
 
-    path('topseller', views.topseller, name='topseller'),
-    path('newarrival', views.newarrival, name='newarrival'),
+    # GENERAL PAGES
+    path('', views.home, name='home'),
+    path('topseller', views.top_seller, name='topseller'),
+    path('newarrival', views.new_arrival, name='newarrival'),
 
+    # ACCOUNT RELATED
+    path('register', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
-
+    path('account/', views.account_page, name='account'),
 
     ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA CONTA
-    #path('sign_in/', views.create_account, name='create_account'),
-    #path('account/', views.account, name='account'),
+    #path('sign_up/', views.create_account, name='create_account'),
     #path('account/edit/', views.edit_account, name='edit_account'),
     #path('account/add/address/', views.add_address, name='add_address'),
     # path('account/edit/address/', views.edit_address, name='edit_address'),

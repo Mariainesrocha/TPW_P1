@@ -1,14 +1,34 @@
 from django import forms
 from django.forms import ModelForm
 from TechSekai.models import *
+from django.contrib.auth import models
 
-
+"""
 class CreateAccount(forms.Form):
     email = forms.EmailField(label="Email")
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
     name = forms.CharField(label="Name", max_length=40)
     gender = forms.ChoiceField(label="Gender", choices=GENDER)
     phone_number = forms.IntegerField(label="Contact")
+"""
+
+
+class CreateDjangoUserForm(forms.ModelForm):  # Used in Register View
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    class Meta:
+        model = models.User
+        fields = ('username', 'email', 'password')
+
+
+class EditUserForm(forms.Form):  # Used in Account_Page View
+    email = forms.EmailField(label="Email")
+    username = forms.CharField(label="Username", max_length=40)
+
+    gender = forms.ChoiceField(label="Gender", choices=GENDER, required=False)
+    phone_number = forms.IntegerField(label="Contact", required=False)
+    age = forms.IntegerField(label="Age", required=False)
+    avatar = forms.ImageField(label="Avatar", required=False)
 
 
 class AddAddressForm(forms.Form):
@@ -18,12 +38,6 @@ class AddAddressForm(forms.Form):
     zip_code = forms.CharField(label='Zip Code', max_length=10)
     floor = forms.IntegerField(label='Floor')
     door = forms.IntegerField(label='Door')
-
-
-class EditAccount(ModelForm):
-    class Meta:
-        model = User
-        fields = ['name', 'gender', 'phone_number', 'age', 'profile_pic']
 
 
 class EditAddressForm(ModelForm):
@@ -39,7 +53,7 @@ class AddShopForm(forms.Form):
     phone_number = forms.IntegerField(label='Contact')
     website = forms.URLField(label='Website URL', max_length=40)
     opening_hours = forms.TimeField(label='Opening hours')
-    #certified = forms.BooleanField() #TODO ??????????????????????????????????? ISTO É SUPOSTO ESTAR SO EDITAVEL? SO PRA ADMIN?? HOW?
+    # certified = forms.BooleanField() #TODO ??????????????????????????????????? ISTO É SUPOSTO ESTAR SO EDITAVEL? SO PRA ADMIN?? HOW?
     image = forms.ImageField(label='Shop/Brand picture')
 
 
@@ -53,12 +67,14 @@ class EditShopForm(ModelForm):
 class AddProductForm(forms.Form):
     reference_num = forms.IntegerField(label='Reference Number')
     name = forms.CharField(label='Product Name', max_length=50)
-    details = forms.TextField('Details', max_length=300)
+    details = forms.CharField(label='Details', max_length=300)
     warehouse = forms.CharField(label='Warehouse', max_length=50)
 
-    category = forms.CharField(label='Category', max_length=50)    #TODO: NAO ESQUECER Q É FK LOGO TEMOS Q CRIAR OBJETO CATEGORY 1º E SÓ DPS PRODUCT (LOGICA DO LADO DA VIEWx)
+    category = forms.CharField(label='Category',
+                               max_length=50)  # TODO: NAO ESQUECER Q É FK LOGO TEMOS Q CRIAR OBJETO CATEGORY 1º E SÓ DPS PRODUCT (LOGICA DO LADO DA VIEWx)
     brand = forms.CharField(label='Brand', max_length=50)
-    price = forms.IntegerField(label='Price') #com este campo do form, o produto em si e a loja "loggada" criamos o ITEM
+    price = forms.IntegerField(
+        label='Price')  # com este campo do form, o produto em si e a loja "loggada" criamos o ITEM
 
 
 class EditProductForm(forms.Form):
@@ -66,4 +82,3 @@ class EditProductForm(forms.Form):
         model = Shop
         exclude = ['reference_number']
         fields = '__all__'
-

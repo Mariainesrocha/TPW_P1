@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth import models as auth_models
+from django.conf import settings
 
 GENDER = [
     ('M', 'Male'),
@@ -40,15 +41,19 @@ class Address(models.Model):
 
 
 class User(models.Model):
-    django_user = models.OneToOneField(auth_models.User, on_delete=models.CASCADE)  #TODO: CONFIRMAR!!!!!!!!!!!!!!!!
-    email = models.EmailField(max_length=35, primary_key=True, null=False)  #nota: tag primary_key define que esta é a PK e não um id
-    name = models.CharField(max_length=40, null=False)
-    gender = models.CharField(choices=GENDER, max_length=20)
-    age = models.PositiveIntegerField(null=False, validators=[MaxValueValidator(100), MinValueValidator(1)])
-    phone_number = models.PositiveBigIntegerField()
-    profile_pic = models.ImageField()
-    role = models.CharField(max_length=10, choices=ROLES)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    django_user = models.OneToOneField(auth_models.User, on_delete=models.CASCADE)
+
+    gender = models.CharField(choices=GENDER, max_length=20, null=True, blank=True)
+    age = models.PositiveIntegerField(validators=[MaxValueValidator(100), MinValueValidator(1)], null=True,blank=True)
+    phone_number = models.PositiveBigIntegerField(null=True,blank=True)
+    avatar = models.ImageField(null=True,blank=True)
+    role = models.CharField(max_length=10, choices=ROLES, null=True,blank=True)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True,blank=True)
+
+    # to return a meaningful value when a unicode representation of a User model instance is requested.(?)
+    # See more: https://www.tangowithdjango.com/book/chapters/login.html
+    def __unicode__(self):
+        return self.django_user.username
 
 
 class Shop(models.Model):
