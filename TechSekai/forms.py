@@ -70,11 +70,9 @@ class AddProductForm(forms.Form):
     details = forms.CharField(label='Details', max_length=300)
     warehouse = forms.CharField(label='Warehouse', max_length=50)
 
-    category = forms.CharField(label='Category',
-                               max_length=50)  # TODO: NAO ESQUECER Q É FK LOGO TEMOS Q CRIAR OBJETO CATEGORY 1º E SÓ DPS PRODUCT (LOGICA DO LADO DA VIEWx)
+    category = forms.CharField(label='Category', max_length=50)  # TODO: NAO ESQUECER Q É FK LOGO TEMOS Q CRIAR OBJETO CATEGORY 1º E SÓ DPS PRODUCT (LOGICA DO LADO DA VIEWx)
     brand = forms.CharField(label='Brand', max_length=50)
-    price = forms.IntegerField(
-        label='Price')  # com este campo do form, o produto em si e a loja "loggada" criamos o ITEM
+    price = forms.IntegerField(label='Price')  # com este campo do form, o produto em si e a loja "loggada" criamos o ITEM
 
 
 class EditProductForm(forms.Form):

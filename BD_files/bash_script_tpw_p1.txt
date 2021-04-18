@@ -81,24 +81,24 @@ obj15.save()
 
 ------------------------------------ BRANDS
 
-obj1 = Brand(brand='Samsung')
-obj2 = Brand(brand='Sony')
-obj3 = Brand(brand='Xiaomi')
-obj4 = Brand(brand='Nintendo')
-obj5 = Brand(brand='HP')
-obj6 = Brand(brand='Lenovo')
-obj7 = Brand(brand='Apple')
-obj8 = Brand(brand='LG')
-obj9 = Brand(brand='Canon')
-obj10 = Brand(brand='GoPro')
-obj11 = Brand(brand='SanDisk')
-obj12 = Brand(brand='DELL')
-obj13 = Brand(brand='Nvidia')
-obj14 = Brand(brand='Toshiba')
-obj15 = Brand(brand='Cisco Systems')
-obj16 = Brand(brand='Qualcomm')
-obj17 = Brand(brand='Microsoft')
-obj18 = Brand(brand='JBL')
+obj1 = Brand(name='Samsung')
+obj2 = Brand(name='Sony')
+obj3 = Brand(name='Xiaomi')
+obj4 = Brand(name='Nintendo')
+obj5 = Brand(name='HP')
+obj6 = Brand(name='Lenovo')
+obj7 = Brand(name='Apple')
+obj8 = Brand(name='LG')
+obj9 = Brand(name='Canon')
+obj10 = Brand(name='GoPro')
+obj11 = Brand(name='SanDisk')
+obj12 = Brand(name='DELL')
+obj13 = Brand(name='Nvidia')
+obj14 = Brand(name='Toshiba')
+obj15 = Brand(name='Cisco Systems')
+obj16 = Brand(name='Qualcomm')
+obj17 = Brand(name='Microsoft')
+obj18 = Brand(name='JBL')
 
 obj1.save()
 obj2.save()
@@ -125,7 +125,7 @@ obj18.save()
 obj1 = Product(reference_number=123455, name='iPhone X',details='Color: White,RAM: 3GB, SO: iOS, Storage:64GB, Battery: 2176 mAh, Screen-size:5.8', warehouse='US Apple warehouse')
 
 c1 = Category.objects.get(name="Phones")
-b1 = Brand.objects.get(brand="Apple")
+b1 = Brand.objects.get(name="Apple")
 obj1.category = c1
 obj1.brand = b1
 
@@ -133,7 +133,7 @@ obj1.brand = b1
 obj2 = Product(reference_number=11111, name='iPhone 5',details='Color: Silver,RAM: 3GB, SO: iOS, Storage:32GB, Battery: 1500 mAh, Screen-size:3.8', warehouse='US Apple warehouse')
 
 c1 = Category.objects.get(name="Phones")
-b1 = Brand.objects.get(brand="Apple")
+b1 = Brand.objects.get(name="Apple")
 obj2.category = c1
 obj2.brand = b1
 
@@ -141,14 +141,14 @@ obj2.brand = b1
 obj3 = Product(reference_number=1222222, name='Smart TV 4K', details='Color: Black, SO: webOS, Diagonal Screen-size:165 cm', warehouse='LG Eletronics Portugal S.A.')
 
 c3 = Category.objects.get(name="TVs")
-b3 = Brand.objects.get(brand="LG")
+b3 = Brand.objects.get(name="LG")
 obj3.category = c3
 obj3.brand = b3
 
 obj4 = Product(reference_number=13333, name='Smart TV', details='Color: Silver, SO: Tizen, Diagonal Screen-size:191 cm', warehouse='Samsung Electronics Japan')
 
 c4 = Category.objects.get(name="TVs")
-b4 = Brand.objects.get(brand="Samsung")
+b4 = Brand.objects.get(name="Samsung")
 obj4.category = c4
 obj4.brand = b4
 
