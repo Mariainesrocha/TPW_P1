@@ -13,12 +13,30 @@ class CreateAccount(forms.Form):
 """
 
 
-class CreateDjangoUserForm(forms.ModelForm):  # Used in Register View
-    password = forms.CharField(widget=forms.PasswordInput())
+class RegisterDjangoUserForm(forms.ModelForm):
 
     class Meta:
         model = models.User
         fields = ('username', 'email', 'password')
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.TextInput(attrs={'class': 'form-control'}),
+            'password': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class LoginDjangoUserForm(forms.ModelForm):
+
+    class Meta:
+        model = models.User
+        fields = ('username', 'password')
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'password': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class LoginForm(forms.forms.Form):
+    username = forms.CharField(label="Username", max_length=40, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(label="Username", max_length=40, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
 
 class EditUserForm(forms.Form):  # Used in Account_Page View

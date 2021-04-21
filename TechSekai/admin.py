@@ -2,7 +2,6 @@ from django.contrib import admin
 from TechSekai.models import *
 
 # Register your models here.
-#admin.register(UserProfile)
 admin.site.register(User)
 admin.site.register(Shop)
 admin.site.register(Product)

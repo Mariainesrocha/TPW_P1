@@ -65,7 +65,7 @@ class Shop(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     email = models.EmailField(max_length=35, null=False, primary_key=True)
     phone_number = models.PositiveBigIntegerField()
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True)
     website = models.URLField(max_length=40)
     opening_hours = models.TimeField(null=True)
     certified = models.BooleanField(null=False)
@@ -97,6 +97,7 @@ class Product(models.Model):
     warehouse = models.CharField(max_length=50, null=False)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
+    qty_sold = models.IntegerField()
     UniqueConstraint(fields=['reference_number', 'brand', 'name'], name='unique_product')
 
     def __str__(self):
