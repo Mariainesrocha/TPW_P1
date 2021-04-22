@@ -8,27 +8,103 @@ from TechSekai.forms import *
 
 # Create your views here.
 def home(request):
-    user_form = RegisterDjangoUserForm()
-    login_form = LoginDjangoUserForm()
-
-    brands_list = Brand.objects.all()
-    products = Product.objects.all()
-    hot_deals = products.order_by("-qty_sold")[0:20] #Apenas os {20} Produtos + vendidos
-    new_arrivals = products.order_by("id") #Assumindo que o id é auto-incremented... > id => + recente
-    shops = Shop.objects.filter(certified=True)
-
-    content = {'user_form': user_form, 'login_form': login_form,
-               'brands_list': brands_list, 'shops_list': shops,
-               'hot_deals': hot_deals, 'new_arrivals': new_arrivals}
+    content = default_content(RegisterDjangoUserForm(), LoginDjangoUserForm())
     return render(request, 'home.html', content)
 
 
-def top_seller(request):
-    return render(request, 'TopSeller.html')
+def new_arrivals(request):
+    products = Product.objects.all().order_by("id")[0:20]
+
+    register_form = RegisterDjangoUserForm()
+    login_form = LoginDjangoUserForm()
+    content = {
+        'user_form': register_form,
+        'login_form': login_form,
+        'products': products,
+
+    }
+    return render(request, 'list_items.html', content)
 
 
-def new_arrival(request):
-    return render(request, 'NewArrival.html')
+def hot_deals(request):
+    products = Product.objects.all().order_by("-qty_sold")[0:20]  # Apenas os {20} Produtos + vendidos
+
+    register_form = RegisterDjangoUserForm()
+    login_form = LoginDjangoUserForm()
+    content = {
+        'user_form': register_form,
+        'login_form': login_form,
+        'products': products,
+    }
+    return render(request, 'list_items.html', content)
+
+
+def search(request):
+    name = request.GET['name']
+    category = request.GET['category']
+    products = Product.objects.filter(name__icontains=name, category__name__icontains=category)
+
+    register_form = RegisterDjangoUserForm()
+    login_form = LoginDjangoUserForm()
+    content = {
+        'user_form': register_form,
+        'login_form': login_form,
+        'products': products,
+        'name': name,
+        'category': category,
+    }
+    return render(request, 'list_items.html', content)
+
+
+def register(request):  # Usando o Pop-Up do Pedro. Até funciona, mas precisa de ajustes em termos de feedback..
+    register = False
+    if request.method == 'POST':
+        register_form = RegisterDjangoUserForm(data=request.POST)
+
+        if register_form.is_valid():
+            user = User()
+            django_user = register_form.save()
+            django_user.set_password(django_user.password)
+            try:
+                django_user.save()
+                user.django_user = django_user
+                user.save()
+                registered = True  # Pode ser usado para dar feedback de <criaçao com sucesso> ao user
+            except:  # If something fails
+                django_user.delete()
+                user.delete()
+        else:
+            print(register_form.errors)
+    else:
+        register_form = RegisterDjangoUserForm()
+
+    login_form = LoginDjangoUserForm()
+    content = default_content(register_form, login_form)
+    return render(request, 'home.html', content)
+
+
+def login_view(request):
+    if request.method == "POST":
+        login_form = LoginDjangoUserForm(request.POST)
+        if login_form.is_valid():
+            username = login_form.cleaned_data['username']
+            password = login_form.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    # Redirect to a success page.
+                else:
+                    # Return a 'disabled account' error message
+                    print("Disabled account")
+            else:
+                print("User does not exist")
+    else:
+        login_form = LoginDjangoUserForm()
+
+    register_form = RegisterDjangoUserForm()
+    content = default_content(register_form, login_form)
+    return render(request, 'home.html', content)
 
 
 def account_page(request):
@@ -60,48 +136,43 @@ def account_page(request):
     return render(request, 'Account.html', {'extra_user_form': user_form, 'updated': updated})
 
 
-def register(request): #Usando o Pop-Up do Pedro. Funcionar até funciona, mas precisa de ajustes em termos de feedback..
+def registerShop(request):  # copiado do registerUser..mas precisa de mts alteracoes
+    register = False
     if request.method == 'POST':
-        user_form = RegisterDjangoUserForm(data=request.POST)
+        add_shop_form = AddShopForm(data=request.POST)
 
-        if user_form.is_valid():
-            user = User()
-            django_user = user_form.save()
+        if add_shop_form.is_valid():
+            shop = Shop()
+            django_user = add_shop_form.save()
             django_user.set_password(django_user.password)
             try:
                 django_user.save()
-                user.django_user = django_user
-                user.save()
+                shop.django_user = django_user
+                shop.save()
                 registered = True
             except:  # If something fails
                 django_user.delete()
-                user.delete()
+                shop.delete()
         else:
-            print(user_form.errors)
+            print(add_shop_form.errors)
     else:
-        user_form = RegisterDjangoUserForm()
         print("For some reason it is not a POST------------------------")
 
-    user_form = RegisterDjangoUserForm()
-    login_form = LoginDjangoUserForm()
-    return render(request, 'home.html', {'user_form': user_form, 'login_form': login_form})
+    content = default_content()
+    return render(request, 'home.html', content)
 
-def login_view(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        if user.is_active:
-            login(request, user)
-            # Redirect to a success page.
-        else:
-            # Return a 'disabled account' error message
-            print("Disabled account")
-    else:
-        print("User does not exist")
-    user_form = RegisterDjangoUserForm()
-    login_form = LoginDjangoUserForm()
-    return render(request, 'home.html', {'user_form': user_form, 'login_form': login_form})
+
+def default_content(user_form, login_form):
+    brands_list = Brand.objects.all()
+    products = Product.objects.all()
+    hot_deals = products.order_by("-qty_sold")[0:20]  # Apenas os {20} Produtos + vendidos
+    new_arrivals = products.order_by("id")[0:20]  # Assumindo que o id é auto-incremented... > id => + recente
+    shops_list = Shop.objects.filter(certified=True)
+
+    content = {'user_form': user_form, 'login_form': login_form,
+               'brands_list': brands_list, 'shops_list': shops_list,
+               'hot_deals': hot_deals, 'new_arrivals': new_arrivals}
+    return content
 
 
 def registerOLD(request):

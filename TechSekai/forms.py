@@ -14,7 +14,6 @@ class CreateAccount(forms.Form):
 
 
 class RegisterDjangoUserForm(forms.ModelForm):
-
     class Meta:
         model = models.User
         fields = ('username', 'email', 'password')
@@ -24,8 +23,8 @@ class RegisterDjangoUserForm(forms.ModelForm):
             'password': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
-class LoginDjangoUserForm(forms.ModelForm):
 
+class LoginDjangoUserForm(forms.ModelForm):
     class Meta:
         model = models.User
         fields = ('username', 'password')
@@ -33,10 +32,6 @@ class LoginDjangoUserForm(forms.ModelForm):
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'password': forms.TextInput(attrs={'class': 'form-control'}),
         }
-
-class LoginForm(forms.forms.Form):
-    username = forms.CharField(label="Username", max_length=40, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(label="Username", max_length=40, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
 
 class EditUserForm(forms.Form):  # Used in Account_Page View
@@ -47,6 +42,10 @@ class EditUserForm(forms.Form):  # Used in Account_Page View
     phone_number = forms.IntegerField(label="Contact", required=False)
     age = forms.IntegerField(label="Age", required=False)
     avatar = forms.ImageField(label="Avatar", required=False)
+
+
+class SearchForm(forms.Form):
+    name = forms.CharField(max_length=40)
 
 
 class AddAddressForm(forms.Form):
@@ -88,9 +87,11 @@ class AddProductForm(forms.Form):
     details = forms.CharField(label='Details', max_length=300)
     warehouse = forms.CharField(label='Warehouse', max_length=50)
 
-    category = forms.CharField(label='Category', max_length=50)  # TODO: NAO ESQUECER Q É FK LOGO TEMOS Q CRIAR OBJETO CATEGORY 1º E SÓ DPS PRODUCT (LOGICA DO LADO DA VIEWx)
+    category = forms.CharField(label='Category',
+                               max_length=50)  # TODO: NAO ESQUECER Q É FK LOGO TEMOS Q CRIAR OBJETO CATEGORY 1º E SÓ DPS PRODUCT (LOGICA DO LADO DA VIEWx)
     brand = forms.CharField(label='Brand', max_length=50)
-    price = forms.IntegerField(label='Price')  # com este campo do form, o produto em si e a loja "loggada" criamos o ITEM
+    price = forms.IntegerField(
+        label='Price')  # com este campo do form, o produto em si e a loja "loggada" criamos o ITEM
 
 
 class EditProductForm(forms.Form):

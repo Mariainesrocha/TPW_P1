@@ -9,7 +9,7 @@
 
 ## PROBLEMAS -> N SEI COMO METER UMA PK COMPOSTAAA
 
------------------------------------ Address
+#----------------------------------- Address
 a1 = Address(country='Portugal', city='Aveiro', zip_code='3950-087',street='Rua de Ovar',door=128, floor=1) 
 a2 = Address(country='Portugal', city='Águeda', zip_code='3850-116',street='Rua dos chapéus coloridos',door=210, floor=3) 
 a3 = Address(country='Portugal', city='Anadia', zip_code='3780-083',street='Rua das Roseiras',door=500, floor=0)
@@ -44,7 +44,7 @@ a14.save()
 a15.save()
 ########################################################################################################################################
 
------------------------------------ Category
+#----------------------------------- Category
 obj1 = Category(name='TVs',totDevices=0)
 obj2 = Category(name='Phones',totDevices=0)
 obj3 = Category(name='Drones',totDevices=0)
@@ -79,7 +79,7 @@ obj14.save()
 obj15.save()
 ########################################################################################################################################
 
------------------------------------- BRANDS
+#------------------------------------ BRANDS
 
 obj1 = Brand(name='Samsung')
 obj2 = Brand(name='Sony')
@@ -121,8 +121,8 @@ obj18.save()
 ########################################################################################################################################
 
 
------------------------------------- PRODS
-obj1 = Product(reference_number=123455, name='iPhone X',details='Color: White,RAM: 3GB, SO: iOS, Storage:64GB, Battery: 2176 mAh, Screen-size:5.8', warehouse='US Apple warehouse')
+#------------------------------------ PRODS
+obj1 = Product(reference_number=123455, name='iPhone X',details='Color: White,RAM: 3GB, SO: iOS, Storage:64GB, Battery: 2176 mAh, Screen-size:5.8', warehouse='US Apple warehouse',qty_sold=0)
 
 c1 = Category.objects.get(name="Phones")
 b1 = Brand.objects.get(name="Apple")
@@ -130,7 +130,7 @@ obj1.category = c1
 obj1.brand = b1
 
 
-obj2 = Product(reference_number=11111, name='iPhone 5',details='Color: Silver,RAM: 3GB, SO: iOS, Storage:32GB, Battery: 1500 mAh, Screen-size:3.8', warehouse='US Apple warehouse')
+obj2 = Product(reference_number=11111, name='iPhone 5',details='Color: Silver,RAM: 3GB, SO: iOS, Storage:32GB, Battery: 1500 mAh, Screen-size:3.8', warehouse='US Apple warehouse',qty_sold=0)
 
 c1 = Category.objects.get(name="Phones")
 b1 = Brand.objects.get(name="Apple")
@@ -138,14 +138,14 @@ obj2.category = c1
 obj2.brand = b1
 
 
-obj3 = Product(reference_number=1222222, name='Smart TV 4K', details='Color: Black, SO: webOS, Diagonal Screen-size:165 cm', warehouse='LG Eletronics Portugal S.A.')
+obj3 = Product(reference_number=1222222, name='Smart TV 4K', details='Color: Black, SO: webOS, Diagonal Screen-size:165 cm', warehouse='LG Eletronics Portugal S.A.',qty_sold=0)
 
 c3 = Category.objects.get(name="TVs")
 b3 = Brand.objects.get(name="LG")
 obj3.category = c3
 obj3.brand = b3
 
-obj4 = Product(reference_number=13333, name='Smart TV', details='Color: Silver, SO: Tizen, Diagonal Screen-size:191 cm', warehouse='Samsung Electronics Japan')
+obj4 = Product(reference_number=13333, name='Smart TV', details='Color: Silver, SO: Tizen, Diagonal Screen-size:191 cm', warehouse='Samsung Electronics Japan',qty_sold=0)
 
 c4 = Category.objects.get(name="TVs")
 b4 = Brand.objects.get(name="Samsung")
@@ -162,7 +162,7 @@ obj4.save()
 ACABAAR----
 ########################################################################################################################################
 
------------------------------------- USER
+#------------------------------------ USER
 >>> from django.contrib.auth.models import User as DjangoU
 
 
@@ -186,7 +186,7 @@ obj2.save()
 
 ########################################################################################################################################
 
------------------------------------ SHOP
+#----------------------------------- SHOP
 obj1 = Shop(email='tech4U@mail.com',name='Tech4U', phone_number=987234568, certified=0)
 u1 = User.objects.get(email='luis_cepeda@mail.com')
 
@@ -198,7 +198,7 @@ obj1.save()
 
 ########################################################################################################################################
 
------------------------------------ ITEM
+#----------------------------------- ITEM
 s1  = Shop.objects.get(name='Tech4U')
 p1  = Product.objects.get(name='iPhone 5')
 obj1 = Item(price=350, shop=s1,product=p1)
@@ -206,7 +206,7 @@ obj1.save()
 
 ########################################################################################################################################
 
------------------------------------- Cart
+#------------------------------------ Cart
 u1  = User.objects.get(email='anasimoes@gmail.com')
 i1  = Item.objects.get(id=1)
 
@@ -218,13 +218,13 @@ obj1.save()
 
 ########################################################################################################################################
 
------------------------------------ Order
+#----------------------------------- Order
 
 
 
 ########################################################################################################################################
 
------------------------------------ WishList
+#----------------------------------- WishList
 
 
 
