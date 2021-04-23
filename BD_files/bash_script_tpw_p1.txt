@@ -7,8 +7,6 @@
 # 3rd add data
 
 
-## PROBLEMAS -> N SEI COMO METER UMA PK COMPOSTAAA
-
 #----------------------------------- Address
 a1 = Address(country='Portugal', city='Aveiro', zip_code='3950-087',street='Rua de Ovar',door=128, floor=1) 
 a2 = Address(country='Portugal', city='Águeda', zip_code='3850-116',street='Rua dos chapéus coloridos',door=210, floor=3) 
@@ -159,16 +157,15 @@ obj3.save()
 obj4.save()
 
 
-ACABAAR----
 ########################################################################################################################################
 
 #------------------------------------ USER
->>> from django.contrib.auth.models import User as DjangoU
+from django.contrib.auth.models import User as DjangoU
 
 
-obj1 = User(email='anasimoes@gmail.com',name='Ana Simoes', gender='F', age=19, phone_number=966789098, role='C')
+obj1 = User(gender='F', age=19, phone_number=966789098, role='C')
 
-dju = DjangoU.objects.create_user(username='anasimoes@gmail.com', password='secret')
+dju = DjangoU.objects.create_user(username='anasimoes@gmail.com',first_name='Ana Simoes', password='secret')
 obj1.django_user = dju
 a1  = Address.objects.get(city='Anadia')
 obj1.address = a1
@@ -176,8 +173,8 @@ obj1.address = a1
 obj1.save()
 
 
-obj2 = User(email='luis_cepeda@mail.com',name='Luis Cepeda', gender='M', age=32, phone_number=987234568, role='S')
-dju2 = DjangoU.objects.create_user(username='luis_cepeda@mail.com', password='superSecret')
+obj2 = User(gender='M', age=32, phone_number=987234568, role='S')
+dju2 = DjangoU.objects.create_user(username='luis_cepeda@mail.com',first_name='Luis Cepeda', password='superSecret')
 obj2.django_user = dju2
 a2  = Address.objects.get(city='Salamanca')
 obj2.address = a2
@@ -188,7 +185,8 @@ obj2.save()
 
 #----------------------------------- SHOP
 obj1 = Shop(email='tech4U@mail.com',name='Tech4U', phone_number=987234568, certified=0)
-u1 = User.objects.get(email='luis_cepeda@mail.com')
+dj1 = DjangoU.objects.get(username='luis_cepeda@mail.com')
+u1 = User.objects.get(django_user=dj1)
 
 a1  = Address.objects.get(city='Málaga')
 obj1.address = a1
@@ -204,27 +202,46 @@ p1  = Product.objects.get(name='iPhone 5')
 obj1 = Item(price=350, shop=s1,product=p1)
 obj1.save()
 
+s2  = Shop.objects.get(name='Tech4U')
+p2  = Product.objects.get(name='iPhone X')
+obj2 = Item(price=500, shop=s2,product=p2)
+obj2.save()
+
 ########################################################################################################################################
 
 #------------------------------------ Cart
-u1  = User.objects.get(email='anasimoes@gmail.com')
+dj1 = DjangoU.objects.get(username='anasimoes@gmail.com')
+u1 = User.objects.get(django_user=dj1)
 i1  = Item.objects.get(id=1)
-
 obj1 = Cart(quantity=1, total_price=350, user=u1)
-
 obj1.save()
+obj1.items.add(i1) #adicionar o "set"
 
-## ACABAR A PARTE DE ADICIONAR SETS AINDA N VI COMO FAZER
+
 
 ########################################################################################################################################
 
 #----------------------------------- Order
 
+dj1 = DjangoU.objects.get(username='anasimoes@gmail.com')
+u1 = User.objects.get(django_user=dj1)
+i2  = Item.objects.get(id=2)
+i1  = Item.objects.get(id=1)
+obj1 = Order(user=u1, quantity=1,total_price=850,order_state='ORDERED',payment_meth='PayPal')
+obj1.save()
+obj1.items.add(i1)
+obj1.items.add(i2)
 
 
 ########################################################################################################################################
 
 #----------------------------------- WishList
+dj1 = DjangoU.objects.get(username='anasimoes@gmail.com')
+u1 = User.objects.get(django_user=dj1)
+i1  = Item.objects.get(id=2)
+obj1 = WishList(user=u1)
+obj1.save()
+obj1.items.add(i1)
 
 
 

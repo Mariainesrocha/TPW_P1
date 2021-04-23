@@ -1,6 +1,4 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from TechSekai.forms import *
@@ -21,9 +19,9 @@ def new_arrivals(request):
         'user_form': register_form,
         'login_form': login_form,
         'products': products,
-
+        'page': 'New Arrivals'
     }
-    return render(request, 'list_items.html', content)
+    return render(request, 'new_hot_items.html', content)
 
 
 def hot_deals(request):
@@ -35,9 +33,12 @@ def hot_deals(request):
         'user_form': register_form,
         'login_form': login_form,
         'products': products,
+        'page': 'Hot Deals'
     }
-    return render(request, 'list_items.html', content)
+    return render(request, 'new_hot_items.html', content)
 
+## TODO: REFACTOR JUNTAR VIEW HOT DEALS C NEW_ARRIVALS -> o codigo é o mm
+## TODO: NO BOTAO DE SEARCH TEM 'X' PRA APAGAR PESQUISA, DESCOBRIR ONDE ESTÁ E DAR REDIRECT PARA HOME
 
 def search(request):
     name = request.GET['name']
@@ -53,7 +54,7 @@ def search(request):
         'name': name,
         'category': category,
     }
-    return render(request, 'list_items.html', content)
+    return render(request, 'itemsList.html', content)
 
 
 def register(request):  # Usando o Pop-Up do Pedro. Até funciona, mas precisa de ajustes em termos de feedback..
@@ -80,7 +81,7 @@ def register(request):  # Usando o Pop-Up do Pedro. Até funciona, mas precisa d
 
     login_form = LoginDjangoUserForm()
     content = default_content(register_form, login_form)
-    return render(request, 'home.html', content)
+    return render(request, 'atualLayout.html', content)
 
 
 def login_view(request):
@@ -104,7 +105,7 @@ def login_view(request):
 
     register_form = RegisterDjangoUserForm()
     content = default_content(register_form, login_form)
-    return render(request, 'home.html', content)
+    return render(request, 'atualLayout.html', content)
 
 
 def account_page(request):
@@ -159,7 +160,7 @@ def registerShop(request):  # copiado do registerUser..mas precisa de mts altera
         print("For some reason it is not a POST------------------------")
 
     content = default_content()
-    return render(request, 'home.html', content)
+    return render(request, 'atualLayout.html', content)
 
 
 def default_content(user_form, login_form):
@@ -168,12 +169,40 @@ def default_content(user_form, login_form):
     hot_deals = products.order_by("-qty_sold")[0:20]  # Apenas os {20} Produtos + vendidos
     new_arrivals = products.order_by("id")[0:20]  # Assumindo que o id é auto-incremented... > id => + recente
     shops_list = Shop.objects.filter(certified=True)
+    categories = Category.objects.all().order_by("-totDevices")[0:6]  #6 categorias com mais produtos disponiveis
 
     content = {'user_form': user_form, 'login_form': login_form,
                'brands_list': brands_list, 'shops_list': shops_list,
-               'hot_deals': hot_deals, 'new_arrivals': new_arrivals}
+               'hot_deals': hot_deals, 'new_arrivals': new_arrivals, 'categories': categories}
     return content
 
+
+
+
+
+## TODO NOTA: USAR ISTO ANTES DE CADA VIEW Q NECESSITA DE LOGIN PARA GARANTIR CONTA É + FACIL
+# @login_required(login_url='/accounts/login/') -> caso tenham duvidas: https://docs.djangoproject.com/en/3.1/topics/auth/default/
+
+'''
+# usar import:
+from django.contrib.auth.decorators import user_passes_test
+
+
+def email_check(user):
+    return user.email.endswith('@example.com')
+
+@user_passes_test(email_check)
+def my_view(request):
+'''
+
+
+
+
+
+
+
+''' 
+NOT USED TO BE ERASED
 
 def registerOLD(request):
     registered = False
@@ -200,19 +229,4 @@ def registerOLD(request):
         user_form = RegisterDjangoUserForm()
 
     return render(request, 'Register.html', {'user_form': user_form, 'registered': registered})
-
-
-## TODO NOTA: USAR ISTO ANTES DE CADA VIEW Q NECESSITA DE LOGIN PARA GARANTIR CONTA É + FACIL
-# @login_required(login_url='/accounts/login/') -> caso tenham duvidas: https://docs.djangoproject.com/en/3.1/topics/auth/default/
-
-'''
-# usar import:
-from django.contrib.auth.decorators import user_passes_test
-
-
-def email_check(user):
-    return user.email.endswith('@example.com')
-
-@user_passes_test(email_check)
-def my_view(request):
 '''

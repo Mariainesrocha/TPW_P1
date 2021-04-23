@@ -59,6 +59,9 @@ class User(models.Model):
     def __unicode__(self):
         return self.django_user.username
 
+    def __str__(self):
+        return self.django_user.username
+
 
 class Shop(models.Model):
     name = models.CharField(max_length=40, null=False)
@@ -66,21 +69,22 @@ class Shop(models.Model):
     email = models.EmailField(max_length=35, null=False, primary_key=True)
     phone_number = models.PositiveBigIntegerField()
     address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True)
-    website = models.URLField(max_length=40)
+    website = models.URLField(max_length=40, null=True)
     opening_hours = models.TimeField(null=True)
     certified = models.BooleanField(null=False)
     image = models.ImageField(null=True)
 
     def __str__(self):
-        return self.name + " , " + self.owner.django_user.first_name
+        return self.name + " , " + self.owner.django_user.username
 
 
 class Category(models.Model):
     name = models.CharField(max_length=50, null=False, primary_key=True)
     totDevices = models.IntegerField()
+    image = models.ImageField(null=True, default='logo.png')
 
     def __str__(self):
-        return self.name + ": " + self.totDevices
+        return self.name + ": " + str(self.totDevices)
 
 
 class Brand(models.Model):
@@ -98,6 +102,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     qty_sold = models.IntegerField()
+    image = models.ImageField(null=True, default='logo.png')
     UniqueConstraint(fields=['reference_number', 'brand', 'name'], name='unique_product')
 
     def __str__(self):
@@ -119,10 +124,16 @@ class Cart(models.Model):
     items = models.ManyToManyField(Item)
     total_price = models.PositiveIntegerField(null=False)
 
+    def __str__(self):
+        return self.user.django_user.username + ", total_price: " + str(self.total_price)
+
 
 class WishList(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     items = models.ManyToManyField(Item)
+
+    def __str__(self):
+        return self.user.django_user.username + ", num_items: " + str(len(self.items.all()))
 
 
 class Order(models.Model):
@@ -134,7 +145,7 @@ class Order(models.Model):
     payment_meth = models.CharField(max_length=20, choices=PAYMENT_METHOD)
 
     def __str__(self):
-        return self.user.django_user.first_name + "Address: " + self.user.address + "\n Payment:" + self.payment_meth + "   " + str(self.total_price)
+        return self.user.django_user.first_name
 
 
 ################################## LINKS Q PODEM VIR A SER UTEIS
