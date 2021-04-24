@@ -87,26 +87,19 @@ def register(request):  # Usando o Pop-Up do Pedro. Até funciona, mas precisa d
 
 def login_view(request):
     if request.method == "POST":
-        login_form = LoginDjangoUserForm(request.POST)
-        if login_form.is_valid():
-            username = login_form.cleaned_data['username']
-            password = login_form.cleaned_data['password']
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    # Redirect to a success page.
-                else:
-                    # Return a 'disabled account' error message
-                    print("Disabled account")
+        user = authenticate(username=request.POST['username'], password=request.POST['password'])
+        if user is not None:
+            if user.is_active:
+                login(request, user)
             else:
-                print("User does not exist")
-    else:
-        login_form = LoginDjangoUserForm()
+                print("Disabled account")
+        else:
+            print("User does not exist")
 
     register_form = RegisterDjangoUserForm()
+    login_form = LoginDjangoUserForm()
     content = default_content(register_form, login_form)
-    return render(request, 'mainLayout.htmll', content)
+    return render(request, 'home.html', content)
 
 
 def account_page(request):
