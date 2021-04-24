@@ -1,4 +1,6 @@
 {% load static %}
+{% load auth_extras %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -76,85 +78,66 @@
                 <div class="header-right">
                     <div class="header-dropdown-link">
 
-                        <a href="#" class="wishlist-link">
-                            <i class="icon-heart-o"></i>
-                            <span class="wishlist-count">3</span>
-                            <span class="wishlist-txt">Wishlist</span>
-                        </a>
-
-                        <div class="dropdown cart-dropdown">
-                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                               aria-haspopup="true" aria-expanded="false" data-display="static">
-                                <i class="icon-shopping-cart"></i>
-                                <span class="cart-count">2</span>
-                                <span class="cart-txt">Cart</span>
+                    <!-- EDITED: PARA LOJAS N TEREM ESTA PARTE -->
+                    {% if not request.user|has_group:"shops" %}
+                            <a href="#" class="wishlist-link">
+                                <i class="icon-heart-o"></i>
+                                <span class="wishlist-count">3</span>
+                                <span class="wishlist-txt">Wishlist</span>
                             </a>
 
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <div class="dropdown-cart-products">
-                                    <div class="product">
-                                        <div class="product-cart-details">
-                                            <h4 class="product-title">
-                                                <a href="#">Product Example</a>
-                                            </h4>
+                            <div class="dropdown cart-dropdown">
+                                <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false" data-display="static">
+                                    <i class="icon-shopping-cart"></i>
+                                    <span class="cart-count">2</span>
+                                    <span class="cart-txt">Cart</span>
+                                </a>
 
-                                            <span class="cart-product-info">
-                                                    <span class="cart-product-qty">1</span>
-                                                    x 84.00€
-                                                </span>
-                                        </div><!-- End .product-cart-details -->
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <div class="dropdown-cart-products">
+                                        <div class="product">
+                                            <div class="product-cart-details">
+                                                <h4 class="product-title">
+                                                    <a href="#">Product Example</a>
+                                                </h4>
 
-                                        <figure class="product-image-container">
-                                            <a href="#" class="product-image">
-                                                <img src="https://bludiode.com/30721-large_default/xiaomi-mi-11-ultra-12-gb-512-gb-branco.jpg"
-                                                     alt="product">
-                                            </a>
-                                        </figure>
-                                        <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                                    </div><!-- End .product -->
+                                                <span class="cart-product-info">
+                                                        <span class="cart-product-qty">1</span>
+                                                        x 84.00€
+                                                    </span>
+                                            </div><!-- End .product-cart-details -->
 
-                                    <div class="product">
-                                        <div class="product-cart-details">
-                                            <h4 class="product-title">
-                                                <a href="#">Product Example</a>
-                                            </h4>
+                                            <figure class="product-image-container">
+                                                <a href="#" class="product-image">
+                                                    <img src="https://bludiode.com/30721-large_default/xiaomi-mi-11-ultra-12-gb-512-gb-branco.jpg"
+                                                         alt="product">
+                                                </a>
+                                            </figure>
+                                            <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
+                                        </div><!-- End .product -->
+                                    <div class="dropdown-cart-total">
+                                        <span>Total</span>
 
-                                            <span class="cart-product-info">
-                                                    <span class="cart-product-qty">1</span>
-                                                    x 76.00€
-                                                </span>
-                                        </div><!-- End .product-cart-details -->
+                                        <span class="cart-total-price">160.00€</span>
+                                    </div><!-- End .dropdown-cart-total -->
 
-                                        <figure class="product-image-container">
-                                            <a href="#" class="product-image">
-                                                <img src="https://bludiode.com/30721-large_default/xiaomi-mi-11-ultra-12-gb-512-gb-branco.jpg"
-                                                     alt="product">
-                                            </a>
-                                        </figure>
-                                        <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                                    </div><!-- End .product -->
-                                </div><!-- End .cart-product -->
-
-                                <div class="dropdown-cart-total">
-                                    <span>Total</span>
-
-                                    <span class="cart-total-price">160.00€</span>
-                                </div><!-- End .dropdown-cart-total -->
-
-                                <div class="dropdown-cart-action">
-                                    <a href="#" class="btn btn-primary">View Cart</a>
-                                    <a href="#" class="btn btn-outline-primary-2"><span>Checkout</span><i
-                                            class="icon-long-arrow-right"></i></a>
-                                </div><!-- End .dropdown-cart-total -->
-                            </div><!-- End .dropdown-menu -->
-                        </div><!-- End .cart-dropdown -->
-
+                                    <div class="dropdown-cart-action">
+                                        <a href="#" class="btn btn-primary">View Cart</a>
+                                        <a href="#" class="btn btn-outline-primary-2"><span>Checkout</span><i
+                                                class="icon-long-arrow-right"></i></a>
+                                    </div><!-- End .dropdown-cart-total -->
+                                </div><!-- End .dropdown-menu -->
+                            </div><!-- End .cart-dropdown -->
+                            </div>
+                            <div style="padding:5% "></div>
+                        {% endif %}
 
                         {% if user.is_authenticated %}
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
                                     <i class="icon-user "></i>
-                                    <span class="wishlist-txt">{{ user.username }}</span>
+                                    <span class="wishlist-txt" style="color: white"><strong>{{ user.username }}</strong></span>
                                     <span class="caret"></span></button>
                                 <ul class="dropdown-menu">
                                     <li><a href="{% url 'account' %}">Edit Account</a></li>
@@ -385,29 +368,37 @@
                 <div class="header-center">
                     <nav class="main-nav">
                         <ul class="menu sf-arrows">
-                            <li class="megamenu-container active">
-                                <a href="{% url 'home' %}" class="">Home</a>
-                                <div class=""></div><!-- End .megamenu -->
-                            </li>
-                            <li class="megamenu-container">
-                                <a href="{% url 'hot_deals' %}" class="">Hot Deals</a>
-                                <div class=""></div><!-- End .megamenu -->
-                            </li>
-                            <li class="megamenu-container">
-                                <a href="{% url 'new_arrivals' %}" class="">Newly Arrived</a>
-                                <div class=""></div><!-- End .megamenu -->
-                            </li>
-                            <li class="megamenu-container">
-                                <a href="#" class="">Shops</a>
-                                <div class=""></div><!-- End .megamenu -->
-                            </li>
+                            {% if not request.user|has_group:"shops" %} <!--TODO: WHY IS NOT WORKING?? -->
+                                <li class="megamenu-container active">
+                                    <a href="{% url 'home' %}" class="">Home</a>
+                                    <div class=""></div><!-- End .megamenu -->
+                                </li>
+                                <li class="megamenu-container">
+                                    <a href="{% url 'hot_deals' %}" class="">Hot Deals</a>
+                                    <div class=""></div><!-- End .megamenu -->
+                                </li>
+                                <li class="megamenu-container">
+                                    <a href="{% url 'new_arrivals' %}" class="">Newly Arrived</a>
+                                    <div class=""></div><!-- End .megamenu -->
+                                </li>
+                                <li class="megamenu-container">
+                                    <a href="{% url 'home' %}" class="">Shops</a>
+                                    <div class=""></div><!-- End .megamenu -->
+                                </li>
+
+                            {% else %} <!-- caso seja Shop tem navbar diferente -->
+                                <li class="megamenu-container">
+                                    <a href="{% url 'products' %}" class="">My Products</a>
+                                    <div class=""></div><!-- End .megamenu -->
+                                </li>
+                                <li class="megamenu-container">
+                                    <a href="{% url 'add_product' %}" class="">Add Products</a>
+                                    <div class=""></div><!-- End .megamenu -->
+                                </li>
+                            {% endif %}
                         </ul><!-- End .menu -->
                     </nav><!-- End .main-nav -->
                 </div><!-- End .col-lg-9 -->
-                <div class="header-right">
-                    <i class="la la-lightbulb-o"></i>
-                    <p>Clearance Up to 30% Off</p>
-                </div>
             </div><!-- End .container -->
         </div><!-- End .header-bottom -->
     </header><!-- End .header -->
@@ -754,5 +745,6 @@
 <!-- Main JS File -->
 <script src="{% static 'js/main.js' %}"></script>
 <script src="{% static 'js/demos/demo-13.js' %}"></script>
+
 </body>
 </html>

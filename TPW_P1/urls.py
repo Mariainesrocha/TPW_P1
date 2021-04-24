@@ -29,6 +29,7 @@ urlpatterns = [
     # path('account/change_password/', auth_views.PasswordChangeView.as_view(template_name='change_pwd.html', success_url='/account/password_changed'), name='change_password'),
     # path('account/password_changed', views.password_changed, name='password_changed'),
 
+
     ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA GESTAO DAS LOJAS
     # path('shops/add', views.add_shop, name='add_shop'),
     # path('shops/', views.list_shops, name='list_shops'),
@@ -36,9 +37,10 @@ urlpatterns = [
     # path('shops/edit/<int:id>', views.edit_shop, name='edit_shop'),
     # path('shops/delete/<int:id>', views.delete_shop, name='delete_shop'),
 
+
     ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA LOJAS GERIREM SEUS PRODUTOCS
-    # path('products/add', views.add_product, name='add_product'),
-    # path('products/', views.list_products, name='list_products'),
+    path('products/add', views.add_product, name='add_product'),
+    path('products/', views.list_products, name='products'),
     # path('products/<int:id>', views.see_product, name='see_product'),
     # path('products/edit/<int:id>', views.edit_product, name='edit_product'),
     # path('products/delete/<int:id>', views.delete_product, name='delete_product'),

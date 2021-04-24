@@ -40,6 +40,7 @@ def hot_deals(request):
 ## TODO: REFACTOR JUNTAR VIEW HOT DEALS C NEW_ARRIVALS -> o codigo é o mm
 ## TODO: NO BOTAO DE SEARCH TEM 'X' PRA APAGAR PESQUISA, DESCOBRIR ONDE ESTÁ E DAR REDIRECT PARA HOME
 
+
 def search(request):
     name = request.GET['name']
     category = request.GET['category']
@@ -81,7 +82,7 @@ def register(request):  # Usando o Pop-Up do Pedro. Até funciona, mas precisa d
 
     login_form = LoginDjangoUserForm()
     content = default_content(register_form, login_form)
-    return render(request, 'atualLayout.html', content)
+    return render(request, 'mainLayout.html', content)
 
 
 def login_view(request):
@@ -105,7 +106,7 @@ def login_view(request):
 
     register_form = RegisterDjangoUserForm()
     content = default_content(register_form, login_form)
-    return render(request, 'atualLayout.html', content)
+    return render(request, 'mainLayout.htmll', content)
 
 
 def account_page(request):
@@ -160,7 +161,20 @@ def registerShop(request):  # copiado do registerUser..mas precisa de mts altera
         print("For some reason it is not a POST------------------------")
 
     content = default_content()
-    return render(request, 'atualLayout.html', content)
+    return render(request, 'mainLayout.html', content)
+
+
+def add_product(request):
+    return render(request, 'itemsList.html')
+
+
+def list_products(request): # A FUNCIONAR!!! PRECISA DE AJUSTES NOS DADOS E PRA SER VER MELHOR SE TÁ TUDO OKAY
+    if request.user.groups.filter(name='shops').exists():
+        loggedShop = Shop.objects.get(email=request.user.email)
+        items = Item.objects.filter(shop=loggedShop)
+        return render(request, 'itemsList.html', {'products': items})
+    else:
+        return render(request, 'error.html')
 
 
 def default_content(user_form, login_form):
@@ -175,9 +189,6 @@ def default_content(user_form, login_form):
                'brands_list': brands_list, 'shops_list': shops_list,
                'hot_deals': hot_deals, 'new_arrivals': new_arrivals, 'categories': categories}
     return content
-
-
-
 
 
 ## TODO NOTA: USAR ISTO ANTES DE CADA VIEW Q NECESSITA DE LOGIN PARA GARANTIR CONTA É + FACIL
