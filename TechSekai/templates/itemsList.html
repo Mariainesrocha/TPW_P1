@@ -1,17 +1,15 @@
-{% extends "home.html" %}
-{% block list_products_block %}
+{% extends "mainLayout.html" %}
+{% block main %}
    {% load static %}
-    <div class="container">
-        <h2 class="title text-center mb-2">Products: </h2><!-- End .title -->
-        <div class="cat-blocks-container">
-
+    <div class="container" style="padding-top: 5%; padding-bottom: 3%">
+        <div class="cat-blocks-container" style="text-align: center">
         {% for p in products %}
-            {% if forloop.first %} <div class="row"> {% endif %}
-                    <div style="width:30%; padding: 10px 10px 10px 10px">
+            {% if forloop.first %} <div class="row justify-content-evenly"> {% endif %}
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
                         <div class="product">
                             <figure class="product-media">
                                 <a href="#">
-                                    <img src="{% static "imgs/"%}{{ p.image }}" alt="Product image" class="product-image">
+                                    <img src="{% static "imgs/"%}{{ p.image }}" alt="Product image" style="height: 200px;width: 100%;" class="img-fluid">
                                 </a>
                                 <div class="product-action-vertical">
                                     <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
@@ -29,11 +27,11 @@
                                 <p class="new-price" style="color: #1a8cff">$251.99</p>
                             </div><!-- End .product-body -->
                         </div><!-- End .product -->
-                    </div>
-            {% if forloop.counter|divisibleby:5 %} </div><div class="row">{% endif %}
+                </div>
+            {% if forloop.counter|divisibleby:4 %} </div><div class="row">{% endif %}
             {% if forloop.last %}</div>{% endif %}
             {% empty %}
-                <p class="btn btn-primary disabled" style="color: white; margin-bottom: 10px; border-radius: 10px;"> Sorry, no products available! </p>
+                <p class="btn btn-danger disabled btn-lg" style="color: white; margin-bottom: 10px; border-radius: 10px;"> Sorry, no products available! </p>
                 <br>
         {% endfor %}
         </div><!-- End .cat-blocks-container -->

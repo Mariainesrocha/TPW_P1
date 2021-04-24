@@ -113,6 +113,7 @@ class Item(models.Model):
     price = models.PositiveIntegerField(null=False)
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
+    stock = models.PositiveIntegerField(null=False)
 
     def __str__(self):
         return self.product.name + " price: " + str(self.price)

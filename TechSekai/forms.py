@@ -23,7 +23,11 @@ class RegisterDjangoUserForm(forms.ModelForm):
             'password': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+class LoginDjangoUserForm(forms.Form):
+    username = forms.CharField(label="Username", max_length=40, widget=forms.TextInput(attrs={'class':'form-control'}))
+    password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class':'form-control'}))
 
+'''
 class LoginDjangoUserForm(forms.ModelForm):
     class Meta:
         model = models.User
@@ -32,7 +36,7 @@ class LoginDjangoUserForm(forms.ModelForm):
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'password': forms.TextInput(attrs={'class': 'form-control'}),
         }
-
+'''
 
 class EditUserForm(forms.Form):  # Used in Account_Page View
     email = forms.EmailField(label="Email")
@@ -99,3 +103,8 @@ class EditProductForm(forms.Form):
         model = Shop
         exclude = ['reference_number']
         fields = '__all__'
+
+class DoOrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ('quantity', 'total_price', 'payment_meth')

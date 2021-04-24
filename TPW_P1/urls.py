@@ -14,11 +14,24 @@ urlpatterns = [
 
 
     # ACCOUNT RELATED
-    path('register', views.register, name='register'),
+    #path('register', views.register, name='register'),
     #path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-    path('login', views.login_view, name='login_view'),
+    path('login/', views.login_view, name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
     path('account/', views.account_page, name='account'),
+
+    # PRODUCT RELATED
+    path('product/<int:prod_id>', views.product_shops, name='product_shops'),
+    path('do_order/<int:item_id>', views.order_product, name='order_product'),
+    path('add_to_cart/<int:item_id>', views.add_to_Cart, name='add_to_cart'),
+    path('add_to_wishlist/<int:item_id>', views.add_to_Wishlist, name='add_to_wishlist'),
+
+    ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA LOJAS GERIREM SEUS PRODUTOCS
+    path('products/add', views.add_product, name='add_product'),
+    path('products/', views.list_products, name='products'),
+    # path('products/<int:id>', views.see_product, name='see_product'),
+    # path('products/edit/<int:id>', views.edit_product, name='edit_product'),
+    # path('products/delete/<int:id>', views.delete_product, name='delete_product'),
 
     ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA CONTA
     # path('sign_up/', views.create_account, name='create_account'),
@@ -36,14 +49,6 @@ urlpatterns = [
     # path('shops/<int:id>', views.see_shop, name='see_shop'),
     # path('shops/edit/<int:id>', views.edit_shop, name='edit_shop'),
     # path('shops/delete/<int:id>', views.delete_shop, name='delete_shop'),
-
-
-    ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA LOJAS GERIREM SEUS PRODUTOCS
-    path('products/add', views.add_product, name='add_product'),
-    path('products/', views.list_products, name='products'),
-    # path('products/<int:id>', views.see_product, name='see_product'),
-    # path('products/edit/<int:id>', views.edit_product, name='edit_product'),
-    # path('products/delete/<int:id>', views.delete_product, name='delete_product'),
 
     ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA CLIENTE FAZER COMPRAS
     # path('account/order/', views.order, name='order'),

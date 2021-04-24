@@ -39,7 +39,7 @@
                         <i class="icon-bars"></i>
                     </button>
 
-                    <a href="#" class="logo">
+                    <a href="{% url 'home' %}" class="logo">
                         <img src="{% static 'imgs/cut_logo.png' %}" alt="TechSekai" width="220" height="50px">
                     </a>
                 </div>
@@ -130,27 +130,30 @@
                                 </div><!-- End .dropdown-menu -->
                             </div><!-- End .cart-dropdown -->
                             </div>
-                            <div style="padding:5% "></div>
                         {% endif %}
 
                         {% if user.is_authenticated %}
                             <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                                    <i class="icon-user "></i>
-                                    <span class="wishlist-txt" style="color: white"><strong>{{ user.username }}</strong></span>
-                                    <span class="caret"></span></button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="{% url 'account' %}">Edit Account</a></li>
-                                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                                <a href="" class="wishlist-link dropdown-toggle" type="button" data-toggle="dropdown">
+                                <i class="icon-user"></i>
+                                <span style="font-size: 12px" class="wishlist-txt"><strong>{{ user.username }}</strong></span>
+                                </a>
+                                <ul class="dropdown-menu" style="text-align: center; font-size: 12px">
+                                    <li><a style="color: #1d84ea" href="{% url 'account' %}">Edit Account</a></li>
+                                    <li><a style="color: red" href="{% url 'logout' %}">Logout</a></li>
                                 </ul>
                             </div>
+
+
+
                         {% else %}
-                            <a href="#signin-modal" data-toggle="modal" class="wishlist-link">
+                            <a href="{% url 'login' %}" class="wishlist-link">
                             <i class="icon-user"></i>
                             <span class="wishlist-txt">User</span>
+                            </a>
                         {% endif %}
 
-                        </a>
+
 
                     </div>
                 </div><!-- End .header-right -->
@@ -166,7 +169,7 @@
                             Browse Categories
                         </a>
 
-                        <div class="dropdown-menu show">
+                        <div class="dropdown-menu {% if '/' == request.path %} show {% endif %}">
                             <nav class="side-nav">
                                 <ul class="menu-vertical sf-arrows">
                                     <li class="megamenu-container">
@@ -369,15 +372,15 @@
                     <nav class="main-nav">
                         <ul class="menu sf-arrows">
                             {% if not request.user|has_group:"shops" %} <!--TODO: WHY IS NOT WORKING?? -->
-                                <li class="megamenu-container active">
+                                <li class="megamenu-container {% if '/' == request.path %} active {% endif %}">
                                     <a href="{% url 'home' %}" class="">Home</a>
                                     <div class=""></div><!-- End .megamenu -->
                                 </li>
-                                <li class="megamenu-container">
+                                <li class="megamenu-container {% if '/hot_deals/' == request.path %} active {% endif %}">
                                     <a href="{% url 'hot_deals' %}" class="">Hot Deals</a>
                                     <div class=""></div><!-- End .megamenu -->
                                 </li>
-                                <li class="megamenu-container">
+                                <li class="megamenu-container {% if '/new_arrivals/' == request.path %} active {% endif %}">
                                     <a href="{% url 'new_arrivals' %}" class="">Newly Arrived</a>
                                     <div class=""></div><!-- End .megamenu -->
                                 </li>
@@ -565,171 +568,6 @@
 </div><!-- End .page-wrapper -->
 <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
-<!-- Sign in / Register Modal -->
-<div class="modal fade" id="signin-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true"><i class="icon-close"></i></span>
-                </button>
-
-                <div class="form-box">
-                    <div class="form-tab">
-                        <ul class="nav nav-pills nav-fill nav-border-anim" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="signin-tab" data-toggle="tab" href="#signin" role="tab"
-                                   aria-controls="signin" aria-selected="true">Sign In</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="register-tab" data-toggle="tab" href="#register" role="tab"
-                                   aria-controls="register" aria-selected="false">Register</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content" id="tab-content-5">
-                            <div class="tab-pane fade show active" id="signin" role="tabpanel"
-                                 aria-labelledby="signin-tab">
-                                <form action="/login" method="post">
-                                    {% csrf_token %}
-                                    <div class="form-group">
-                                        <label for="singin-email">Username *</label>
-                                        {{ login_form.username }}
-                                        {{ login_form.username.error_messages }}
-                                    </div><!-- End .form-group -->
-
-                                    <div class="form-group">
-                                        <label for="singin-password">Password *</label>
-                                        {{ login_form.password }}
-                                        {{ login_form.password.error_messages }}
-                                    </div><!-- End .form-group -->
-
-                                    <div class="form-footer">
-                                        <button type="submit" class="btn btn-outline-primary-2">
-                                            <span>LOG IN</span>
-                                            <i class="icon-long-arrow-right"></i>
-                                        </button>
-
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="signin-remember">
-                                            <label class="custom-control-label" for="signin-remember">Remember
-                                                Me</label>
-                                        </div><!-- End .custom-checkbox -->
-
-                                        <a href="#" class="forgot-link">Forgot Your Password?</a>
-                                    </div><!-- End .form-footer -->
-                                </form>
-                                <div class="form-choice">
-                                    <p class="text-center">or sign in with</p>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <a href="#" class="btn btn-login btn-g">
-                                                <i class="icon-google"></i>
-                                                Login With Google
-                                            </a>
-                                        </div><!-- End .col-6 -->
-                                        <div class="col-sm-6">
-                                            <a href="#" class="btn btn-login btn-f">
-                                                <i class="icon-facebook-f"></i>
-                                                Login With Facebook
-                                            </a>
-                                        </div><!-- End .col-6 -->
-                                    </div><!-- End .row -->
-                                </div><!-- End .form-choice -->
-                            </div><!-- .End .tab-pane -->
-                            <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-                                <form id="user_form" method="post" action="/register">
-                                    {% csrf_token %}
-                                    <div class="form-group">
-                                        <label for="register-email">Your email address *</label>
-                                        {{ user_form.email }}
-                                        {{ user_form.email.errors }}
-                                    </div><!-- End .form-group -->
-
-                                    <div class="form-group">
-                                        <label for="register-email">Your Username *</label>
-                                        {{ user_form.username }}
-                                        {{ user_form.username.errors }}
-                                    </div><!-- End .form-group -->
-
-                                    <div class="form-group">
-                                        <label for="register-password">Password *</label>
-                                        {{ user_form.password }}
-                                        {{ user_form.password.errors }}
-                                    </div><!-- End .form-group -->
-
-                                    <div class="form-footer">
-                                        <button type="submit" class="btn btn-outline-primary-2">
-                                            <span>SIGN UP</span>
-                                            <i class="icon-long-arrow-right"></i>
-                                        </button>
-
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="register-policy"
-                                                   required>
-                                            <label class="custom-control-label" for="register-policy">I agree to the <a
-                                                    href="#">privacy policy</a> *</label>
-                                        </div><!-- End .custom-checkbox -->
-                                    </div><!-- End .form-footer -->
-                                </form>
-                                <div class="form-choice">
-                                    <p class="text-center">or sign in with</p>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <a href="#" class="btn btn-login btn-g">
-                                                <i class="icon-google"></i>
-                                                Login With Google
-                                            </a>
-                                        </div><!-- End .col-6 -->
-                                        <div class="col-sm-6">
-                                            <a href="#" class="btn btn-login  btn-f">
-                                                <i class="icon-facebook-f"></i>
-                                                Login With Facebook
-                                            </a>
-                                        </div><!-- End .col-6 -->
-                                    </div><!-- End .row -->
-                                </div><!-- End .form-choice -->
-                            </div><!-- .End .tab-pane -->
-                        </div><!-- End .tab-content -->
-                    </div><!-- End .form-tab -->
-                </div><!-- End .form-box -->
-            </div><!-- End .modal-body -->
-        </div><!-- End .modal-content -->
-    </div><!-- End .modal-dialog -->
-</div><!-- End .modal -->
-
-<div class="container newsletter-popup-container mfp-hide" id="newsletter-popup-form">
-    <div class="row justify-content-center">
-        <div class="col-10">
-            <div class="row no-gutters bg-white newsletter-popup-content">
-                <div class="col-xl-3-5col col-lg-7 banner-content-wrap">
-                    <div class="banner-content text-center">
-                        <img src="{% static 'imgs/cut_logo.png' %}" class="logo" alt="logo" width="280" height="15">
-                        <h2 class="banner-title">get <span>25<light>%</light></span> off</h2>
-                        <p>Subscribe to the TechSekai newsletter to receive timely updates from your favorite
-                            products.</p>
-                        <form action="#">
-                            <div class="input-group input-group-round">
-                                <input type="email" class="form-control form-control-white"
-                                       placeholder="Your Email Address" aria-label="Email Adress" required>
-                                <div class="input-group-append">
-                                    <button class="btn" type="submit"><span>go</span></button>
-                                </div><!-- .End .input-group-append -->
-                            </div><!-- .End .input-group -->
-                        </form>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="register-policy-2" required>
-                            <label class="custom-control-label" for="register-policy-2">Do not show this popup
-                                again</label>
-                        </div><!-- End .custom-checkbox -->
-                    </div>
-                </div>
-                <div class="col-xl-2-5col col-lg-5 ">
-                    <img src="" class="newsletter-img" alt="newsletter">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <!-- Plugins JS File -->
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
