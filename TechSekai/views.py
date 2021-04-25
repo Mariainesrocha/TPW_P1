@@ -88,6 +88,7 @@ def search(request):
     }
     return render(request, 'itemsList.html', content)
 
+
 def account_page(request):
     user = User.objects.get(django_user=request.user)
     updated = False
@@ -159,16 +160,17 @@ def add_product(request):
                 category = form.cleaned_data['category']
                 brand = form.cleaned_data['brand']
 
-                new_cat = form.cleaned_data['new_cat']
-                new_brand = form.cleaned_data['new_brand']
+
 
                 # lowest_price = form.cleaned_data['lowest_price']
-
-                if new_cat != '':
+                if category == 'Other':
+                    new_cat = form.cleaned_data['new_cat']
                     category = Category(name=new_cat, totDevices=0)
                     category.save()
 
-                if new_brand != '':
+                if category == 'Other':
+                    form.new_cat.disabled = False
+                    new_brand = form.cleaned_data['new_brand']
                     brand = Brand(name=new_brand)
                     brand.save()
 

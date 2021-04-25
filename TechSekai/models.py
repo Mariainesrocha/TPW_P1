@@ -95,7 +95,6 @@ class Brand(models.Model):
         return self.name
 
 
-## TODO: ALTERADO
 class Product(models.Model):
     reference_number = models.PositiveBigIntegerField(null=False)
     name = models.CharField(max_length=50, null=False)

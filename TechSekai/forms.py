@@ -23,6 +23,7 @@ class RegisterDjangoUserForm(forms.ModelForm):
             'password': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+
 class LoginDjangoUserForm(forms.Form):
     username = forms.CharField(label="Username", max_length=40, widget=forms.TextInput(attrs={'class':'form-control'}))
     password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class':'form-control'}))
@@ -37,6 +38,7 @@ class LoginDjangoUserForm(forms.ModelForm):
             'password': forms.TextInput(attrs={'class': 'form-control'}),
         }
 '''
+
 
 class EditUserForm(forms.Form):  # Used in Account_Page View
     email = forms.EmailField(label="Email")
@@ -94,15 +96,15 @@ class AddProductForm(forms.Form):
     price = forms.IntegerField(label='Price')  # com este campo do form, o produto em si e a loja "loggada" criamos o ITEM
 
     category = forms.ModelChoiceField(label='Category', queryset=Category.objects.all())
-    new_cat = forms.CharField(label='Other category', max_length=50, required=False)  # TODO: NAO ESQUECER Q É FK LOGO TEMOS Q CRIAR OBJETO CATEGORY 1º E SÓ DPS PRODUCT (LOGICA DO LADO DA VIEWx)
+    new_cat = forms.CharField(label='Other category', max_length=50, required=False)
     brand = forms.ModelChoiceField(label='Brand', queryset=Brand.objects.all())
-    new_brand = forms.CharField(label='Other brand', required=False, max_length=50)
+    new_brand = forms.CharField(label='Other brand',  required=False, max_length=50)
 
 
 class EditProductForm(forms.Form):
     class Meta:
-        model = Shop
-        exclude = ['reference_number']
+        model = Product
+        exclude = ['reference_number', 'qty_sold']
         fields = '__all__'
 
 
