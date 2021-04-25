@@ -65,6 +65,7 @@ class User(models.Model):
 
 class Shop(models.Model):
     name = models.CharField(max_length=40, null=False)
+    #owner = models.OneToOneField(auth_models.User, on_delete=models.CASCADE)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     email = models.EmailField(max_length=35, null=False, primary_key=True)
     phone_number = models.PositiveBigIntegerField()
@@ -84,7 +85,7 @@ class Category(models.Model):
     image = models.ImageField(null=True, default='logo.png')
 
     def __str__(self):
-        return self.name + ": " + str(self.totDevices)
+        return self.name
 
 
 class Brand(models.Model):
@@ -94,6 +95,7 @@ class Brand(models.Model):
         return self.name
 
 
+## TODO: ALTERADO
 class Product(models.Model):
     reference_number = models.PositiveBigIntegerField(null=False)
     name = models.CharField(max_length=50, null=False)
@@ -103,6 +105,8 @@ class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     qty_sold = models.IntegerField()
     image = models.ImageField(null=True, default='logo.png')
+    #lowest_price = models.IntegerField(null=False, default=0)
+
     UniqueConstraint(fields=['reference_number', 'brand', 'name'], name='unique_product')
 
     def __str__(self):
@@ -113,7 +117,7 @@ class Item(models.Model):
     price = models.PositiveIntegerField(null=False)
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
-    stock = models.PositiveIntegerField(null=False)
+    #stock = models.PositiveIntegerField(null=False)
 
     def __str__(self):
         return self.product.name + " price: " + str(self.price)

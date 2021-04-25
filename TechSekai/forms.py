@@ -88,14 +88,15 @@ class EditShopForm(ModelForm):
 class AddProductForm(forms.Form):
     reference_num = forms.IntegerField(label='Reference Number')
     name = forms.CharField(label='Product Name', max_length=50)
-    details = forms.CharField(label='Details', max_length=300)
+    details = forms.CharField(label='Details', max_length=300, required=False)
     warehouse = forms.CharField(label='Warehouse', max_length=50)
+    image = forms.ImageField(label='Product image', required=False)
+    price = forms.IntegerField(label='Price')  # com este campo do form, o produto em si e a loja "loggada" criamos o ITEM
 
-    category = forms.CharField(label='Category',
-                               max_length=50)  # TODO: NAO ESQUECER Q É FK LOGO TEMOS Q CRIAR OBJETO CATEGORY 1º E SÓ DPS PRODUCT (LOGICA DO LADO DA VIEWx)
-    brand = forms.CharField(label='Brand', max_length=50)
-    price = forms.IntegerField(
-        label='Price')  # com este campo do form, o produto em si e a loja "loggada" criamos o ITEM
+    category = forms.ModelChoiceField(label='Category', queryset=Category.objects.all())
+    new_cat = forms.CharField(label='Other category', max_length=50, required=False)  # TODO: NAO ESQUECER Q É FK LOGO TEMOS Q CRIAR OBJETO CATEGORY 1º E SÓ DPS PRODUCT (LOGICA DO LADO DA VIEWx)
+    brand = forms.ModelChoiceField(label='Brand', queryset=Brand.objects.all())
+    new_brand = forms.CharField(label='Other brand', required=False, max_length=50)
 
 
 class EditProductForm(forms.Form):
@@ -103,6 +104,7 @@ class EditProductForm(forms.Form):
         model = Shop
         exclude = ['reference_number']
         fields = '__all__'
+
 
 class DoOrderForm(forms.ModelForm):
     class Meta:

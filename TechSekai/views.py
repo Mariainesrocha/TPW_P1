@@ -10,6 +10,7 @@ def home(request):
     content = default_content(request)
     return render(request, 'home.html', content)
 
+
 def login_view(request):
     register_error=False
     login_error=False
@@ -143,14 +144,60 @@ def registerShop(request):  # copiado do registerUser..mas precisa de mts altera
 
 
 def add_product(request):
-    return render(request, 'itemsList.html')
+    if request.user.groups.filter(name='shops').exists():
+        loggedShop = Shop.objects.get(email=request.user.email)
+        if request.method == 'POST':
+            form = AddProductForm(request.POST)
+
+            if form.is_valid():
+                reference_number = form.cleaned_data['reference_num']
+                name = form.cleaned_data['name']
+                details = form.cleaned_data['details']
+                warehouse = form.cleaned_data['warehouse']
+                price = form.cleaned_data['price']
+                image = form.cleaned_data['image']
+                category = form.cleaned_data['category']
+                brand = form.cleaned_data['brand']
+
+                new_cat = form.cleaned_data['new_cat']
+                new_brand = form.cleaned_data['new_brand']
+
+                # lowest_price = form.cleaned_data['lowest_price']
+
+                if new_cat != '':
+                    category = Category(name=new_cat, totDevices=0)
+                    category.save()
+
+                if new_brand != '':
+                    brand = Brand(name=new_brand)
+                    brand.save()
+
+                try:
+                    p = Product(qty_sold=0, reference_number=reference_number, name=name, details=details, warehouse=warehouse, image=image, category=category, brand=brand)
+                    p.save()
+
+                    c = Category.objects.get(name=category)
+                    c.totDevices += 1
+                    c.save()
+
+                    i = Item(price=price, shop=loggedShop, product=p)
+                    i.save()
+                except:
+                    return render(request, 'forms.html', {'msgErr': ' Product not inserted, try again later!'})
+                return render(request, 'forms.html', {'msg': ' Product ' + p.name + ' inserted successfully!'})
+        else:
+            form = AddProductForm()
+            return render(request, 'forms.html', {'form': form})
+    else:
+        return render(request, 'error.html')
 
 
-def list_products(request): # A FUNCIONAR!!! PRECISA DE AJUSTES NOS DADOS E PRA SER VER MELHOR SE TÁ TUDO OKAY
+def list_products(request):
     if request.user.groups.filter(name='shops').exists():
         loggedShop = Shop.objects.get(email=request.user.email)
         items = Item.objects.filter(shop=loggedShop)
-        return render(request, 'itemsList.html', {'products': items})
+        p = [i.product for i in items]
+        return render(request, 'itemsList.html', {'products': p})
     else:
         return render(request, 'error.html')
 

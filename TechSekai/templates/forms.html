@@ -1,0 +1,33 @@
+<!-- TODO: ADICIONADO -->
+{% extends 'mainLayout.html' %}
+
+{% block main %}
+    <h2 style="padding-left: 20%; padding-top: 2%; color: #39f" > New Product </h2>
+    {% if msg %}
+        <div class="alert alert-success" role="alert">
+            <strong>Success: </strong> {{ msg }}
+        </div>
+    {% elif msgErr %}
+        <div class="alert alert-danger" role="alert">
+            <strong>Error: </strong> {{ msgErr }}
+        </div>
+    {% else %}
+        <form action="add" method="POST" style="padding: 2% 20%;">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group row">
+                    <label class="col-sm-2"> {{ field.label_tag }}</label>
+                    <div class="col-md-4">
+                        {{ field }}
+                    </div>
+                    {% if 'Category' in field.label_tag or 'Brand' in field.label_tag%}
+                        <button class="btn" id="other" ><i class="fas fa-plus-circle" style="color: #1a8cff"></i></button>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <div class="form-group" align="center">
+                <input class="btn btn-primary rounded btn-sm" type="submit" value="Create">
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}
