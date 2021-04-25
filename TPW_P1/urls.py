@@ -21,10 +21,13 @@ urlpatterns = [
     path('account/', views.account_page, name='account'),
 
     # PRODUCT RELATED
-    path('product/<int:prod_id>', views.product_shops, name='product_shops'),
-    path('do_order/<int:item_id>', views.order_product, name='order_product'),
-    path('add_to_cart/<int:item_id>', views.add_to_Cart, name='add_to_cart'),
-    path('add_to_wishlist/<int:item_id>', views.add_to_Wishlist, name='add_to_wishlist'),
+    path('product/<int:prod_id>/', views.product_shops, name='product_shops'),
+    path('do_order/<int:item_id>/', views.order_product, name='order_product'),
+    path('add_to_cart/<int:item_id>/', views.add_to_Cart, name='add_to_cart'),
+    path('rem_from_cart/<int:item_id>', views.rem_from_Wishlist, name='rem_from_cart'),
+    path('add_to_wishlist/<int:prod_id>/', views.add_to_Wishlist, name='add_to_wishlist'),
+    path('rem_from_wishlist/<int:prod_id>', views.rem_from_Wishlist, name='rem_from_wishlist'),
+
 
     ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA LOJAS GERIREM SEUS PRODUTOCS
     path('products/add', views.add_product, name='add_product'),

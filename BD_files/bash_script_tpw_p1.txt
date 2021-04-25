@@ -1,10 +1,9 @@
 ## NOTE: SCRIPT TO POPULATE THE BD EVERYTIME WITH NEED TO DELETE ALL DATA
 
-# STEPS
-
-# 1st run: python3 manage.py shell
-# 2nd import models: from TechSekai.models import *
-# 3rd add data
+# STEPS (COMMANDS)
+python3 manage.py shell
+from TechSekai.models import *
+# then, copy the lines below to the terminal
 
 
 #----------------------------------- Address
@@ -182,15 +181,15 @@ obj2.address = a2
 obj2.save()
 
 ########################################################################################################################################
+from django.contrib.auth.models import User as DjangoU
+
+dju = DjangoU.objects.create_user(username='anasimoes@gmail.com',first_name='Ana Simoes', password='secret')
 
 #----------------------------------- SHOP
-obj1 = Shop(email='tech4U@mail.com',name='Tech4U', phone_number=987234568, certified=0)
-dj1 = DjangoU.objects.get(username='luis_cepeda@mail.com')
-u1 = User.objects.get(django_user=dj1)
-
+dju = DjangoU.objects.get(username='anasimoes@gmail.com')
+obj1 = Shop(owner=dju,name='Tech4U', phone_number=987234568, certified=0)
 a1  = Address.objects.get(city='Málaga')
 obj1.address = a1
-obj1.owner = u1
 
 obj1.save()
 

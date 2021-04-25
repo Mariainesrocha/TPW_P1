@@ -41,7 +41,8 @@ class Address(models.Model):
     UniqueConstraint(fields=['street', 'door', 'floor'], name='unique_address')
 
     def __str__(self):
-        return self.street + " Nº " + str(self.door) + " " + str(self.floor) + " ; " + self.zip_code + " , " + self.city + " (" + self.country + ")"
+        return self.street + " Nº " + str(self.door) + " " + str(
+            self.floor) + " ; " + self.zip_code + " , " + self.city + " (" + self.country + ")"
 
 
 class User(models.Model):
@@ -65,9 +66,7 @@ class User(models.Model):
 
 class Shop(models.Model):
     name = models.CharField(max_length=40, null=False)
-    #owner = models.OneToOneField(auth_models.User, on_delete=models.CASCADE)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    email = models.EmailField(max_length=35, null=False, primary_key=True)
+    owner = models.OneToOneField(auth_models.User, on_delete=models.CASCADE)
     phone_number = models.PositiveBigIntegerField()
     address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True)
     website = models.URLField(max_length=40, null=True)
@@ -76,7 +75,7 @@ class Shop(models.Model):
     image = models.ImageField(null=True)
 
     def __str__(self):
-        return self.name + " , " + self.owner.django_user.username
+        return self.name + " , " + self.owner.username
 
 
 class Category(models.Model):
@@ -104,7 +103,7 @@ class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     qty_sold = models.IntegerField()
     image = models.ImageField(null=True, default='logo.png')
-    #lowest_price = models.IntegerField(null=False, default=0)
+    lowest_price = models.IntegerField(null=False, default=0)
 
     UniqueConstraint(fields=['reference_number', 'brand', 'name'], name='unique_product')
 
@@ -116,34 +115,38 @@ class Item(models.Model):
     price = models.PositiveIntegerField(null=False)
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
-    #stock = models.PositiveIntegerField(null=False)
+    stock = models.PositiveIntegerField(null=False, default=0)
 
     def __str__(self):
         return self.product.name + " price: " + str(self.price)
 
 
 class Cart(models.Model):
-    quantity = models.PositiveIntegerField(null=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    items = models.ManyToManyField(Item)
-    total_price = models.PositiveIntegerField(null=False)
+    total_price = models.PositiveIntegerField(null=False, default=0)
 
     def __str__(self):
         return self.user.django_user.username + ", total_price: " + str(self.total_price)
 
 
+class Cart_Item(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    qty = models.PositiveIntegerField(null=False)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+
+
 class WishList(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    items = models.ManyToManyField(Item)
+    prods = models.ManyToManyField(Product)
 
     def __str__(self):
-        return self.user.django_user.username + ", num_items: " + str(len(self.items.all()))
+        return self.user.django_user.username + ", num_items: " + str(len(self.prods.all()))
 
 
 class Order(models.Model):
     quantity = models.PositiveIntegerField(null=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    items = models.ManyToManyField(Item)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
     total_price = models.PositiveIntegerField(null=False)
     order_state = models.CharField(max_length=20, choices=ORDER_STATE)
     payment_meth = models.CharField(max_length=20, choices=PAYMENT_METHOD)
@@ -154,7 +157,5 @@ class Order(models.Model):
 
 ################################## LINKS Q PODEM VIR A SER UTEIS
 '''
-https://stackoverflow.com/questions/28712848/composite-primary-key-in-django
 https://realpython.com/manage-users-in-django-admin/#model-permissions
-https://docs.djangoproject.com/en/dev/ref/django-admin/#sqlclear-appname-appname
 '''

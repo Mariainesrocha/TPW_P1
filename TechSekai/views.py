@@ -12,11 +12,11 @@ def home(request):
 
 
 def login_view(request):
-    register_error=False
-    login_error=False
+    register_error = False
+    login_error = False
     if request.method == "POST":
         if 'sign_in' in request.POST:
-            login_form=LoginDjangoUserForm(data=request.POST)
+            login_form = LoginDjangoUserForm(data=request.POST)
             register_form = RegisterDjangoUserForm()
             user = authenticate(username=request.POST['username'], password=request.POST['password'])
             if user is not None:
@@ -24,7 +24,7 @@ def login_view(request):
                 return render(request, 'home.html')
             else:
                 print("User does not exist")
-                login_error=True
+                login_error = True
         elif 'sign_up' in request.POST:
             register_form = RegisterDjangoUserForm(data=request.POST)
             login_form = LoginDjangoUserForm()
@@ -35,7 +35,11 @@ def login_view(request):
                 django_user.set_password(django_user.password)
                 django_user.save()
                 user.django_user = django_user
+                cart = Cart(user=user)
+                wishlist = WishList(user=user)
                 user.save()
+                cart.save()
+                wishlist.save()
                 user = authenticate(username=request.POST['username'], password=request.POST['password'])
                 login(request, user)
                 return render(request, 'home.html')
@@ -47,7 +51,8 @@ def login_view(request):
     else:
         register_form = RegisterDjangoUserForm()
         login_form = LoginDjangoUserForm()
-    content = {'user_form': register_form, 'login_form': login_form, 'register_error': register_error, 'login_error':login_error}
+    content = {'user_form': register_form, 'login_form': login_form, 'register_error': register_error,
+               'login_error': login_error}
     return render(request, 'login.html', content)
 
 
@@ -72,6 +77,7 @@ def hot_deals(request):
         'page': 'Hot Deals'
     }
     return render(request, 'new_hot_items.html', content)
+
 
 ## TODO: REFACTOR JUNTAR VIEW HOT DEALS C NEW_ARRIVALS -> o codigo é o mm
 ## TODO: NO BOTAO DE SEARCH TEM 'X' PRA APAGAR PESQUISA, DESCOBRIR ONDE ESTÁ E DAR REDIRECT PARA HOME
@@ -160,8 +166,6 @@ def add_product(request):
                 category = form.cleaned_data['category']
                 brand = form.cleaned_data['brand']
 
-
-
                 # lowest_price = form.cleaned_data['lowest_price']
                 if category == 'Other':
                     new_cat = form.cleaned_data['new_cat']
@@ -175,7 +179,8 @@ def add_product(request):
                     brand.save()
 
                 try:
-                    p = Product(qty_sold=0, reference_number=reference_number, name=name, details=details, warehouse=warehouse, image=image, category=category, brand=brand)
+                    p = Product(qty_sold=0, reference_number=reference_number, name=name, details=details,
+                                warehouse=warehouse, image=image, category=category, brand=brand)
                     p.save()
 
                     c = Category.objects.get(name=category)
@@ -226,13 +231,22 @@ def default_content(request):
         cache.set('categories', categories)
 
     return {'brands_list': brands_list, 'shops_list': shops_list,
-               'hot_deals': hot_deals, 'new_arrivals': new_arrivals, 'categories': categories}
+            'hot_deals': hot_deals, 'new_arrivals': new_arrivals, 'categories': categories}
 
 
-def product_shops(request, product_id):
-    product = Product.objects.get(id=product_id)
+def product_shops(request, prod_id):
+    product_in_wishlist = False
+    product = Product.objects.get(id=prod_id)
     item_per_shop = Item.objects.filter(product=product)
-    return render(request, 'Prod_Info.html', {'prod_per_shop': item_per_shop})
+
+    if request.user.is_authenticated:
+        user = User.objects.get(django_user=request.user)
+        user_wishlist = WishList.objects.get(user=user)
+        if product in user_wishlist.prods.all():
+            product_in_wishlist = True
+
+    return render(request, 'prod_Info.html',
+                  {'prod': product, 'wishlist': product_in_wishlist, 'prod_per_shop': item_per_shop})
 
 
 def order_product(request, item_id):
@@ -273,28 +287,85 @@ def order_product(request, item_id):
 
 
 def add_to_Cart(request, item_id):
-    if request.user.is_authenticated and request.method == 'POST':
+    if request.user.is_authenticated:
         user = User.objects.get(django_user=request.user)
         item = Item.objects.get(id=item_id)
 
-        cart_item = Cart(1, user, item, item.price)
-        cart_item.save()
+        # Load User_Cart
+        user_cart = Cart.objects.get(user=user)
+
+        # Save item in Cart
+        duplicated_item = Cart_Item.objects.filter(cart=user_cart, item=item)
+        if duplicated_item:
+            duplicated_item[0].qty = duplicated_item[0].qty + 1
+            duplicated_item[0].save()
+        else:
+            cart_item = Cart_Item(cart=user_cart, item=item, qty=1)
+            cart_item.save()
+
+        # Update Total Price
+        new_total = 0
+        for cart_item in user_cart.cart_item_set.all():
+            new_total += cart_item.item.price * cart_item.qty
+
+        user_cart.total_price = new_total
+        user_cart.save()
+
         return redirect(request.META['HTTP_REFERER'])  # redirect to previous url
     else:
         # Maybe later, save cart items in cache when not authenticated?
-        return render(request, '/')
+        return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
 
-def add_to_Wishlist(request, item_id):
-    if request.user.is_authenticated and request.method == 'POST':
+
+def rem_from_Cart(request, item_id):
+    if request.user.is_authenticated:
         user = User.objects.get(django_user=request.user)
+        user_cart = Cart.objects.get(user=user)
         item = Item.objects.get(id=item_id)
 
-        wishlist = WishList(user, item)
-        wishlist.save()
+        cart_item = Cart_Item.objects.get(cart=user_cart, item=item)
+        if cart_item:
+            cart_item.delete()
+    else:
+        # Maybe later, save cart items in cache when not authenticated?
+        return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
+
+
+def add_to_Wishlist(request, prod_id):
+    if request.user.is_authenticated:
+        user = User.objects.get(django_user=request.user)
+        prod = Product.objects.get(id=prod_id)
+
+        # Load User_Wishlist
+        user_wishlist = WishList.objects.get(user=user)
+
+        # Save Product in Cart
+        if prod not in user_wishlist.prods.all():
+            print("product that will be added:")
+            print(prod)
+            user_wishlist.prods.add(prod)
+        else:
+            print("already have this product")
+
         return redirect(request.META['HTTP_REFERER'])  # redirect to previous url
     else:
         # Maybe later, save cart items in cache when not authenticated?
-        return render(request, '/')
+        return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
+
+
+def rem_from_Wishlist(request, prod_id):
+    if request.user.is_authenticated:
+        user = User.objects.get(django_user=request.user)
+        prod = Product.objects.get(id=prod_id)
+        user_wishlist = WishList.objects.get(user=user)
+
+        if prod in user_wishlist.prods.all():
+            user_wishlist.prods.remove(prod)
+        return redirect(request.META['HTTP_REFERER'])  # redirect to previous url
+    else:
+        # Maybe later, save cart items in cache when not authenticated?
+        return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
+
 
 ## TODO NOTA: USAR ISTO ANTES DE CADA VIEW Q NECESSITA DE LOGIN PARA GARANTIR CONTA É + FACIL
 # @login_required(login_url='/accounts/login/') -> caso tenham duvidas: https://docs.djangoproject.com/en/3.1/topics/auth/default/
@@ -340,4 +411,3 @@ def registerOLD(request):
 
     return render(request, 'Register.html', {'user_form': user_form, 'registered': registered})
 '''
-
