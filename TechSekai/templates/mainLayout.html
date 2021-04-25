@@ -80,7 +80,7 @@
 
                     <!-- EDITED: PARA LOJAS N TEREM ESTA PARTE -->
                     {% if not request.user|has_group:"shops" %}
-                            <a href="#" class="wishlist-link">
+                            <a href="{% url 'wishlist' %}" class="wishlist-link">
                                 <i class="icon-heart-o"></i>
                                 <span class="wishlist-count">3</span>
                                 <span class="wishlist-txt">Wishlist</span>
@@ -123,8 +123,8 @@
                                     </div><!-- End .dropdown-cart-total -->
 
                                     <div class="dropdown-cart-action">
-                                        <a href="#" class="btn btn-primary">View Cart</a>
-                                        <a href="#" class="btn btn-outline-primary-2"><span>Checkout</span><i
+                                        <a href="{% url 'cart' %}" class="btn btn-primary">View Cart</a>
+                                        <a href="{% url 'checkout' %}" class="btn btn-outline-primary-2"><span>Checkout</span><i
                                                 class="icon-long-arrow-right"></i></a>
                                     </div><!-- End .dropdown-cart-total -->
                                 </div><!-- End .dropdown-menu -->
@@ -139,7 +139,7 @@
                                 <span style="font-size: 12px" class="wishlist-txt"><strong>{{ user.username }}</strong></span>
                                 </a>
                                 <ul class="dropdown-menu" style="text-align: center; font-size: 12px">
-                                    <li><a style="color: #1d84ea" href="{% url 'account' %}">Edit Account</a></li>
+                                    <li><a style="color: #1d84ea" href="{% url 'account' %}">My Account</a></li>
                                     <li><a style="color: red" href="{% url 'logout' %}">Logout</a></li>
                                 </ul>
                             </div>
@@ -409,7 +409,7 @@
         {% block main %}
         {% endblock %}
     </main><!-- End .main -->
-    <footer class="footer footer-2">
+    <footer class="footer footer-2" style="background: #39f; color:white">
         <div class="icon-boxes-container">
             <div class="container">
                 <div class="row">
@@ -421,7 +421,7 @@
 
                             <div class="icon-box-content">
                                 <h3 class="icon-box-title">Free Shipping</h3><!-- End .icon-box-title -->
-                                <p>Orders 50€ or more</p>
+                                <p style="color:white"> Orders 50€ or more</p>
                             </div><!-- End .icon-box-content -->
                         </div><!-- End .icon-box -->
                     </div><!-- End .col-sm-6 col-lg-3 -->
@@ -434,7 +434,7 @@
 
                             <div class="icon-box-content">
                                 <h3 class="icon-box-title">Free Returns</h3><!-- End .icon-box-title -->
-                                <p>Within 30 days</p>
+                                <p style="color:white">Within 30 days</p>
                             </div><!-- End .icon-box-content -->
                         </div><!-- End .icon-box -->
                     </div><!-- End .col-sm-6 col-lg-3 -->
@@ -447,7 +447,7 @@
 
                             <div class="icon-box-content">
                                 <h3 class="icon-box-title">Get 20% Off 1 Item</h3><!-- End .icon-box-title -->
-                                <p>When you sign up</p>
+                                <p style="color:white">When you sign up</p>
                             </div><!-- End .icon-box-content -->
                         </div><!-- End .icon-box -->
                     </div><!-- End .col-sm-6 col-lg-3 -->
@@ -460,7 +460,7 @@
 
                             <div class="icon-box-content">
                                 <h3 class="icon-box-title">We Support</h3><!-- End .icon-box-title -->
-                                <p>24/7 amazing services</p>
+                                <p style="color:white">24/7 amazing services</p>
                             </div><!-- End .icon-box-content -->
                         </div><!-- End .icon-box -->
                     </div><!-- End .col-sm-6 col-lg-3 -->
@@ -475,7 +475,7 @@
                         <div class="widget widget-about">
                             <img src="{% static 'imgs/cut_logo.png' %}" class="footer-logo" alt="Footer Logo"
                                  width="300" height="25">
-                            <p>Technology Store made with Django for the first TPW project.</p>
+                            <p style="color:white">Technology Store made with Django for the first TPW project.</p>
 
                             <div class="widget-about-info">
                                 <div class="row">
@@ -542,14 +542,14 @@
 
         <div class="footer-bottom">
             <div class="container">
-                <p class="footer-copyright">Copyright © 2021 TechSekai TPW. All Rights Reserved.</p>
+                <p class="footer-copyright" style="color:white">Copyright © 2021 TechSekai TPW. All Rights Reserved.</p>
                 <!-- End .footer-copyright -->
                 <ul class="footer-menu">
                     <li><a href="#">Terms Of Use</a></li>
                     <li><a href="#">Privacy Policy</a></li>
                 </ul><!-- End .footer-menu -->
 
-                <div class="social-icons social-icons-color">
+                <div class="social-icons social-icons-color" >
                     <span class="social-label">Social Media</span>
                     <a href="#" class="social-icon social-facebook" title="Facebook" target="_blank"><i
                             class="icon-facebook-f"></i></a>

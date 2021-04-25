@@ -36,6 +36,12 @@ urlpatterns = [
     # path('products/edit/<int:id>', views.edit_product, name='edit_product'),
     # path('products/delete/<int:id>', views.delete_product, name='delete_product'),
 
+    ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA CLIENTE FAZER COMPRAS
+    # path('account/order/', views.order, name='order'),
+    path('account/shoppingcart/', views.cart, name='cart'),
+    path('account/checkout/', views.checkout, name='checkout'),
+    path('account/wishlist', views.wishlist, name='wishlist'),
+
     ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA CONTA
     # path('sign_up/', views.create_account, name='create_account'),
     # path('account/edit/', views.edit_account, name='edit_account'),
@@ -52,11 +58,6 @@ urlpatterns = [
     # path('shops/<int:id>', views.see_shop, name='see_shop'),
     # path('shops/edit/<int:id>', views.edit_shop, name='edit_shop'),
     # path('shops/delete/<int:id>', views.delete_shop, name='delete_shop'),
-
-    ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA CLIENTE FAZER COMPRAS
-    # path('account/order/', views.order, name='order'),
-    # path('account/shoppingcart/', views.cart, name='cart'),
-    # path('account/wishlist', views.wishlist, name='wishlist'),
 
     # path('add/<str:pType>/', views.addProduct, name='addProduct'),
     # path('edit/<int:pID>/', views.editProduct, name='editProduct'),
