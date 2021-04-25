@@ -52,8 +52,9 @@ urlpatterns = [
 
     ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA CLIENTE FAZER COMPRAS
     # path('account/order/', views.order, name='order'),
-    # path('account/shoppingcart/', views.cart, name='cart'),
-    # path('account/wishlist', views.wishlist, name='wishlist'),
+    path('account/shoppingcart/', views.cart, name='cart'),
+    path('account/checkout/', views.checkout, name='checkout'),
+    path('account/wishlist', views.wishlist, name='wishlist'),
 
     # path('add/<str:pType>/', views.addProduct, name='addProduct'),
     # path('edit/<int:pID>/', views.editProduct, name='editProduct'),

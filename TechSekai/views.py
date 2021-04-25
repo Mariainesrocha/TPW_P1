@@ -115,7 +115,7 @@ def account_page(request):
                                       'age': user.age,
                                       'gender': user.gender})
 
-    return render(request, 'Account.html', {'extra_user_form': user_form, 'updated': updated})
+    return render(request, 'dashboard.html', {'extra_user_form': user_form, 'updated': updated})
 
 
 def registerShop(request):  # copiado do registerUser..mas precisa de mts alteracoes
@@ -258,7 +258,7 @@ def order_product(request, item_id):
                         item.stock = item.stock - qty
                         item.save()
                         order.save()
-                        return render(request, 'Account.html', {'orders': user.order_set})
+                        return render(request, 'old/Account.html', {'orders': user.order_set})
                     else:
                         error_qty = True
                 else:
@@ -295,6 +295,15 @@ def add_to_Wishlist(request, item_id):
     else:
         # Maybe later, save cart items in cache when not authenticated?
         return render(request, '/')
+
+def cart(request):
+    return render(request, 'cart.html')
+
+def checkout(request):
+    return render(request, 'checkout.html')
+
+def wishlist(request):
+    return render(request, 'wishlist.html')
 
 ## TODO NOTA: USAR ISTO ANTES DE CADA VIEW Q NECESSITA DE LOGIN PARA GARANTIR CONTA É + FACIL
 # @login_required(login_url='/accounts/login/') -> caso tenham duvidas: https://docs.djangoproject.com/en/3.1/topics/auth/default/

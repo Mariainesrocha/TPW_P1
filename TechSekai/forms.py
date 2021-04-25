@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from TechSekai.models import *
 from django.contrib.auth import models
+from django.core.validators import RegexValidator
 
 """
 class CreateAccount(forms.Form):
@@ -20,7 +21,7 @@ class RegisterDjangoUserForm(forms.ModelForm):
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.TextInput(attrs={'class': 'form-control'}),
-            'password': forms.TextInput(attrs={'class': 'form-control'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
 
 
@@ -41,13 +42,14 @@ class LoginDjangoUserForm(forms.ModelForm):
 
 
 class EditUserForm(forms.Form):  # Used in Account_Page View
-    email = forms.EmailField(label="Email")
-    username = forms.CharField(label="Username", max_length=40)
+    email = forms.EmailField(label="Email", widget=forms.EmailInput(attrs={'class':'form-control'}))
+    username = forms.CharField(label="Username", max_length=40, widget=forms.TextInput(attrs={'class':'form-control'}))
 
-    gender = forms.ChoiceField(label="Gender", choices=GENDER, required=False)
-    phone_number = forms.IntegerField(label="Contact", required=False)
-    age = forms.IntegerField(label="Age", required=False)
-    avatar = forms.ImageField(label="Avatar", required=False)
+    gender = forms.ChoiceField(label="Gender", choices=GENDER, required=False, widget=forms.Select(attrs={'class':'form-control'}))
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    phone_number = forms.IntegerField(validators=[phone_regex] ,label="Contact", required=False, widget=forms.TextInput(attrs={'class':'form-control'}))
+    age = forms.IntegerField(label="Age", required=False, widget=forms.NumberInput(attrs={'class':'form-control'}))
+    avatar = forms.ImageField(label="Avatar", required=False, widget=forms.FileInput(attrs={'class':'form-control'}))
 
 
 class SearchForm(forms.Form):
