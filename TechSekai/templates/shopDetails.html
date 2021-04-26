@@ -1,0 +1,18 @@
+{% extends "mainLayout.html" %}
+{% block main %}
+    {% load static %}
+
+    <div style="padding: 2% 20%;">
+            <h3><b> Shop Information : </b></h3>
+            <hr>
+            <h5 align="center">{{ shop.name }}</h5>
+            <div align="center">
+                <img src="/media/{{ shop.image }}" alt="Shop image" style="height: 200px;width: 200px;" class="img-fluid">
+            </div>
+            <p><span style="color: #39f; font-weight: bold">Owner:</span> {{ shop.owner }} </p>
+            <p><span style="color: #39f; font-weight: bold">Address:</span> {{ shop.address }} </p>
+            <p><span style="color: #39f; font-weight: bold">Phone Number: </span>{{ shop.phone_number }} </p>
+            <span style="color: #39f; font-weight: bold"> Website URL:</span> <a href="{{ shop.website }}">{{ shop.website }}</a>
+            <p><span style="color: #39f; font-weight: bold"> Opening Hours: </span> {{ shop.opening_hours }} </p>
+    </div>
+{% endblock %}

@@ -8,3 +8,14 @@ register = template.Library()
 def has_group(user, group_name):
     group = Group.objects.get(name=group_name)
     return True if group in user.groups.all() else False
+
+
+@register.simple_tag
+def define(val=None):
+    return val
+
+
+@register.simple_tag
+def addstr(arg1=None, arg2=None):
+    """concatenate arg1 & arg2"""
+    return str(arg1) + str(arg2)

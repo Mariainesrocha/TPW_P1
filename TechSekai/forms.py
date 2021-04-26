@@ -4,15 +4,6 @@ from TechSekai.models import *
 from django.contrib.auth import models
 from django.core.validators import RegexValidator
 
-"""
-class CreateAccount(forms.Form):
-    email = forms.EmailField(label="Email")
-    password = forms.CharField(label='Password', widget=forms.PasswordInput)
-    name = forms.CharField(label="Name", max_length=40)
-    gender = forms.ChoiceField(label="Gender", choices=GENDER)
-    phone_number = forms.IntegerField(label="Contact")
-"""
-
 
 class RegisterDjangoUserForm(forms.ModelForm):
     class Meta:
@@ -21,7 +12,7 @@ class RegisterDjangoUserForm(forms.ModelForm):
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.TextInput(attrs={'class': 'form-control'}),
-            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'password': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 
@@ -29,27 +20,16 @@ class LoginDjangoUserForm(forms.Form):
     username = forms.CharField(label="Username", max_length=40, widget=forms.TextInput(attrs={'class':'form-control'}))
     password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class':'form-control'}))
 
-'''
-class LoginDjangoUserForm(forms.ModelForm):
-    class Meta:
-        model = models.User
-        fields = ('username', 'password')
-        widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control'}),
-            'password': forms.TextInput(attrs={'class': 'form-control'}),
-        }
-'''
-
 
 class EditUserForm(forms.Form):  # Used in Account_Page View
-    email = forms.EmailField(label="Email", widget=forms.EmailInput(attrs={'class':'form-control'}))
-    username = forms.CharField(label="Username", max_length=40, widget=forms.TextInput(attrs={'class':'form-control'}))
+    email = forms.EmailField(label="Email", widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    username = forms.CharField(label="Username", max_length=40, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-    gender = forms.ChoiceField(label="Gender", choices=GENDER, required=False, widget=forms.Select(attrs={'class':'form-control'}))
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
-    phone_number = forms.IntegerField(validators=[phone_regex] ,label="Contact", required=False, widget=forms.TextInput(attrs={'class':'form-control'}))
-    age = forms.IntegerField(label="Age", required=False, widget=forms.NumberInput(attrs={'class':'form-control'}))
-    avatar = forms.ImageField(label="Avatar", required=False, widget=forms.FileInput(attrs={'class':'form-control'}))
+    gender = forms.ChoiceField(label="Gender", choices=GENDER, required=False, widget=forms.Select(attrs={'class': 'form-control'}))
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',  message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    phone_number = forms.IntegerField(validators=[phone_regex], label="Contact", required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    age = forms.IntegerField(label="Age", required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    avatar = forms.ImageField(label="Avatar", required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))
 
 
 class SearchForm(forms.Form):
@@ -97,13 +77,17 @@ class AddProductForm(forms.Form):
     image = forms.ImageField(label='Product image', required=False)
     price = forms.IntegerField(label='Price')  # com este campo do form, o produto em si e a loja "loggada" criamos o ITEM
 
-    category = forms.ModelChoiceField(label='Category', queryset=Category.objects.all())
-    new_cat = forms.CharField(label='Other category', max_length=50, required=False)
-    brand = forms.ModelChoiceField(label='Brand', queryset=Brand.objects.all())
-    new_brand = forms.CharField(label='Other brand',  required=False, max_length=50)
+    category = forms.ModelChoiceField(label='Category', queryset=Category.objects.all().order_by('name'))
+    new_cat = forms.CharField(label='Other category', max_length=50, required=False, disabled=True)
+    brand = forms.ModelChoiceField(label='Brand', queryset=Brand.objects.all().order_by('name'))
+    new_brand = forms.CharField(label='Other brand',  required=False, max_length=50, disabled=True)
 
 
-class EditProductForm(forms.Form):
+class EditProductForm(ModelForm):
+    new_cat = forms.CharField(label='Other category', max_length=50, required=False, disabled=True)
+    new_brand = forms.CharField(label='Other brand',  required=False, max_length=50, disabled=True)
+    price = forms.IntegerField(label='Price')
+
     class Meta:
         model = Product
         exclude = ['reference_number', 'qty_sold']
@@ -114,3 +98,25 @@ class DoOrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ('quantity', 'total_price', 'payment_meth')
+
+
+'''
+class LoginDjangoUserForm(forms.ModelForm):
+    class Meta:
+        model = models.User
+        fields = ('username', 'password')
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'password': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+'''
+
+"""
+class CreateAccount(forms.Form):
+    email = forms.EmailField(label="Email")
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    name = forms.CharField(label="Name", max_length=40)
+    gender = forms.ChoiceField(label="Gender", choices=GENDER)
+    phone_number = forms.IntegerField(label="Contact")
+"""
+

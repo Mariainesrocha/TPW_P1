@@ -1,5 +1,7 @@
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
+from TPW_P1 import settings
 from TechSekai import views
 from django.contrib.auth import views as auth_views
 
@@ -29,38 +31,33 @@ urlpatterns = [
     path('rem_from_wishlist/<int:prod_id>', views.rem_from_Wishlist, name='rem_from_wishlist'),
 
 
-    ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA LOJAS GERIREM SEUS PRODUTOCS
-    path('products/add', views.add_product, name='add_product'),
+    ##PRODUCTS-SHOP
+    path('products/add/', views.add_product, name='add_product'),
     path('products/', views.list_products, name='products'),
-    # path('products/<int:id>', views.see_product, name='see_product'),
-    # path('products/edit/<int:id>', views.edit_product, name='edit_product'),
-    # path('products/delete/<int:id>', views.delete_product, name='delete_product'),
+    path('products/edit/<int:pid>/', views.edit_product, name='edit_product'),
+    path('products/delete/<int:pid>/', views.delete_product, name='delete_product'),
 
-    ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA CLIENTE FAZER COMPRAS
+    ## FAZER COMPRAS
     # path('account/order/', views.order, name='order'),
     path('account/shoppingcart/', views.cart, name='cart'),
     path('account/checkout/', views.checkout, name='checkout'),
-    path('account/wishlist', views.wishlist, name='wishlist'),
+    path('account/wishlist', views.wishlist, name='wishlist'), ##TODO: PEDRO -> CONFIRMAR SE POSSO COLOCAR / NO FINAL URL
 
     ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA CONTA
     # path('sign_up/', views.create_account, name='create_account'),
-    # path('account/edit/', views.edit_account, name='edit_account'),
-    # path('account/add/address/', views.add_address, name='add_address'),
-    # path('account/edit/address/', views.edit_address, name='edit_address'),
+    # path('account/edit/', views.edit_account, name='edit_account')
     # TODO: Encontrei isto pra permitir mudanca de pass c os mecanismos do django como pra login e logout: https://docs.djangoproject.com/en/3.1/topics/auth/default/  -> ver em: Authentication Views¶
     # path('account/change_password/', auth_views.PasswordChangeView.as_view(template_name='change_pwd.html', success_url='/account/password_changed'), name='change_password'),
     # path('account/password_changed', views.password_changed, name='password_changed'),
 
 
     ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA GESTAO DAS LOJAS
-    # path('shops/add', views.add_shop, name='add_shop'),
-    # path('shops/', views.list_shops, name='list_shops'),
-    # path('shops/<int:id>', views.see_shop, name='see_shop'),
-    # path('shops/edit/<int:id>', views.edit_shop, name='edit_shop'),
-    # path('shops/delete/<int:id>', views.delete_shop, name='delete_shop'),
+    # path('shops/add/', views.add_shop, name='add_shop'),
+    path('shops/', views.list_shops, name='list_shops'),
+    path('shops/<int:sid>/', views.see_shop, name='see_shop'),
+    # path('shops/edit/<int:id>/', views.edit_shop, name='edit_shop'),
+    # path('shops/delete/<int:sid>/', views.delete_shop, name='delete_shop'),
 
-    # path('add/<str:pType>/', views.addProduct, name='addProduct'),
-    # path('edit/<int:pID>/', views.editProduct, name='editProduct'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 ## TODO: !!!!!!!!!!!!! IDEIA INTERESSANTE SERIA USAR AS SESSION COOKIES DO DJANGO N SO PRA PESQUISAS, MAS PRA GUARDAR OS PRODUTOS VISTOS RECENTEMENTE, NAO ADICIONADOS AO CARRINHO

@@ -41,8 +41,7 @@ class Address(models.Model):
     UniqueConstraint(fields=['street', 'door', 'floor'], name='unique_address')
 
     def __str__(self):
-        return self.street + " Nº " + str(self.door) + " " + str(
-            self.floor) + " ; " + self.zip_code + " , " + self.city + " (" + self.country + ")"
+        return self.street + " Nº " + str(self.door) + " " + str(self.floor) + " ; " + self.zip_code + " , " + self.city + " (" + self.country + ")"
 
 
 class User(models.Model):
@@ -51,8 +50,8 @@ class User(models.Model):
     gender = models.CharField(choices=GENDER, max_length=20, null=True, blank=True)
     age = models.PositiveIntegerField(validators=[MaxValueValidator(100), MinValueValidator(1)], null=True, blank=True)
     phone_number = models.PositiveBigIntegerField(null=True, blank=True)
-    avatar = models.ImageField(null=True, blank=True)
-    role = models.CharField(max_length=10, choices=ROLES, null=True, blank=True)
+    avatar = models.ImageField(null=True, blank=True, upload_to='images/')
+    role = models.CharField(max_length=10, choices=ROLES, null=True, blank=True)    ## TODO: REMOVER ISTO NE?
     address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True, blank=True)
 
     # to return a meaningful value when a unicode representation of a User model instance is requested.(?)
@@ -66,13 +65,13 @@ class User(models.Model):
 
 class Shop(models.Model):
     name = models.CharField(max_length=40, null=False)
-    owner = models.OneToOneField(auth_models.User, on_delete=models.CASCADE)
+    owner = models.OneToOneField(auth_models.User, on_delete=models.CASCADE) #TODO: DESCOMENTAR
     phone_number = models.PositiveBigIntegerField()
     address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True)
     website = models.URLField(max_length=40, null=True)
     opening_hours = models.TimeField(null=True)
     certified = models.BooleanField(null=False)
-    image = models.ImageField(null=True)
+    image = models.ImageField(null=True, upload_to='images/')
 
     def __str__(self):
         return self.name + " , " + self.owner.username
@@ -81,7 +80,7 @@ class Shop(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=50, null=False, primary_key=True)
     totDevices = models.IntegerField()
-    image = models.ImageField(null=True, default='logo.png')
+    image = models.ImageField(null=True, default='images/logo.png', upload_to='images/')
 
     def __str__(self):
         return self.name
@@ -99,10 +98,10 @@ class Product(models.Model):
     name = models.CharField(max_length=50, null=False)
     details = models.TextField(max_length=300)
     warehouse = models.CharField(max_length=50, null=False)
+    qty_sold = models.IntegerField()
+    image = models.ImageField(null=True, default='logo.png', upload_to='images/', blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
-    qty_sold = models.IntegerField()
-    image = models.ImageField(null=True, default='logo.png')
     lowest_price = models.IntegerField(null=False, default=0)
 
     UniqueConstraint(fields=['reference_number', 'brand', 'name'], name='unique_product')
@@ -133,6 +132,9 @@ class Cart_Item(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     qty = models.PositiveIntegerField(null=False)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.item.product.name + " , "+self.cart.user.django_user.username
 
 
 class WishList(models.Model):

@@ -80,13 +80,19 @@ def hot_deals(request):
 
 
 ## TODO: REFACTOR JUNTAR VIEW HOT DEALS C NEW_ARRIVALS -> o codigo é o mm
-## TODO: NO BOTAO DE SEARCH TEM 'X' PRA APAGAR PESQUISA, DESCOBRIR ONDE ESTÁ E DAR REDIRECT PARA HOME
-
 
 def search(request):
     name = request.GET['name']
     category = request.GET['category']
+    ##TODO: TO BE IMPLEMENTED
+    '''if request.user.groups.filter(name='shops').exists(): 
+        loggedShop = Shop.objects.get(owner=request.user)
+        items = Item.objects.filter(shop=loggedShop)
+
+        products = [i.product for i in items if str(name).lower() in i.product.name.lower() or str(category).lower() in i.product.category.name.lower()]
+    else:'''
     products = Product.objects.filter(name__icontains=name, category__name__icontains=category)
+
     content = {
         'products': products,
         'name': name,
@@ -152,9 +158,9 @@ def registerShop(request):  # copiado do registerUser..mas precisa de mts altera
 
 def add_product(request):
     if request.user.groups.filter(name='shops').exists():
-        loggedShop = Shop.objects.get(email=request.user.email)
+        loggedShop = Shop.objects.get(owner=request.user)
         if request.method == 'POST':
-            form = AddProductForm(request.POST)
+            form = AddProductForm(request.POST, request.FILES)
 
             if form.is_valid():
                 reference_number = form.cleaned_data['reference_num']
@@ -166,21 +172,22 @@ def add_product(request):
                 category = form.cleaned_data['category']
                 brand = form.cleaned_data['brand']
 
-                # lowest_price = form.cleaned_data['lowest_price']
-                if category == 'Other':
-                    new_cat = form.cleaned_data['new_cat']
+                if image is None:
+                    image = 'images/logo.png'
+
+                # lowest_price = form.cleaned_data['lowest_price']      TODO: TRATAR
+                if category.name == 'Other':
+                    new_cat = request.POST['new_cat']
                     category = Category(name=new_cat, totDevices=0)
                     category.save()
 
-                if category == 'Other':
-                    form.new_cat.disabled = False
-                    new_brand = form.cleaned_data['new_brand']
+                if brand.name == 'Other':
+                    new_brand = request.POST['new_brand']
                     brand = Brand(name=new_brand)
                     brand.save()
 
                 try:
-                    p = Product(qty_sold=0, reference_number=reference_number, name=name, details=details,
-                                warehouse=warehouse, image=image, category=category, brand=brand)
+                    p = Product(qty_sold=0, reference_number=reference_number, name=name, details=details, warehouse=warehouse, image=image, category=category, brand=brand)
                     p.save()
 
                     c = Category.objects.get(name=category)
@@ -190,24 +197,90 @@ def add_product(request):
                     i = Item(price=price, shop=loggedShop, product=p)
                     i.save()
                 except:
-                    return render(request, 'forms.html', {'msgErr': ' Product not inserted, try again later!'})
-                return render(request, 'forms.html', {'msg': ' Product ' + p.name + ' inserted successfully!'})
+                    return render(request, 'forms.html', {'msgErr': ' Product not inserted, try again later!', 'page': 'Add'})
+                return render(request, 'forms.html', {'msg': ' Product ' + p.name + ' inserted successfully!', 'page': 'Add'})
         else:
             form = AddProductForm()
-            return render(request, 'forms.html', {'form': form})
+            return render(request, 'forms.html', {'form': form, 'page': 'Add'})
     else:
         return render(request, 'error.html')
 
 
+def edit_product(request, pid):
+    if request.user.groups.filter(name='shops').exists():
+        if request.method == 'POST':
+            p = Product.objects.get(id=pid)
+            form = EditProductForm(request.POST, request.FILES, instance=p)
+
+            if form.is_valid():
+                i = Item.objects.get(product=p)
+                i.price = form.cleaned_data['price']
+                i.save()
+
+                form.save()
+                if form.cleaned_data['image'] is None:
+                    image = 'images/logo.png'
+                    p.image = image
+                    p.save()
+
+                if form.cleaned_data['category'].name == 'Other':
+                    new_cat = request.POST['new_cat']
+                    c = Category(name=new_cat, totDevices=1)
+                    c.save()
+                    p.category = c
+                    p.save()
+
+                if form.cleaned_data['brand'].name == 'Other':
+                    new_brand = request.POST['new_brand']
+                    b = Brand(name=new_brand)
+                    b.save()
+                    p.brand = b
+                    p.save()
+                return render(request, 'forms.html', {'msg': 'Product ' + p.name + ' updated successfully!', 'page': 'Edit'})
+        else:
+            p = Product.objects.get(id=pid)
+            form = EditProductForm(instance=p)
+            form.fields['price'].initial = Item.objects.get(product=p).price
+            return render(request, 'forms.html', {'form': form, 'page': 'Edit', 'id': pid})
+    return render(request, 'error.html')
+
+
+def delete_product(request, pid):
+    if request.user.groups.filter(name='shops').exists():
+        Product.objects.get(id=pid).delete()
+        return redirect('products')
+    return render(request, 'error.html')        ## TODO: ACRESCENTAR POP UP DE CONFIRMACAO
+
+
 def list_products(request):
     if request.user.groups.filter(name='shops').exists():
-        loggedShop = Shop.objects.get(email=request.user.email)
+        loggedShop = Shop.objects.get(owner=request.user)
         items = Item.objects.filter(shop=loggedShop)
         p = [i.product for i in items]
         return render(request, 'itemsList.html', {'products': p})
     else:
         return render(request, 'error.html')
 
+
+def list_shops(request):
+    shops = Shop.objects.all()
+    return render(request, 'shopsList.html', {'shops': shops})
+    
+
+def see_shop(request, sid):
+    shop = Shop.objects.get(id=sid)
+    return render(request, 'shopDetails.html', {'shop': shop})
+
+
+def delete_shop(request, sid):  ##TODO: meter msg a dizer q foi apagada c sucesso -> no caso da pag Admin
+    if request.user.username == 'Admin':
+        Shop.objects.get(id=sid).delete()
+        return redirect('home')
+    if request.user.groups.filter(name='shops').exists():
+        Shop.objects.get(email=request.user.email).delete()
+        return redirect('logout')
+    return render(request, 'error.html')
+    
 
 def default_content(request):
     brands_list = cache.get('brands_list')
@@ -216,7 +289,7 @@ def default_content(request):
     shops_list = cache.get('shops_list')
     categories = cache.get('categories')
     if not (brands_list and hot_deals and new_arrivals and shops_list and categories):
-        brands_list = Brand.objects.all()
+        brands_list = Brand.objects.all().order_by('name')
         products = Product.objects.all()
         hot_deals = products.order_by("-qty_sold")[0:12]
         new_arrivals = products.order_by("id")[0:12]
@@ -370,8 +443,10 @@ def rem_from_Wishlist(request, prod_id):
 def cart(request):
     return render(request, 'cart.html')
 
+
 def checkout(request):
     return render(request, 'checkout.html')
+
 
 def wishlist(request):
     return render(request, 'wishlist.html')

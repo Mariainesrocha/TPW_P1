@@ -3,33 +3,28 @@
 {% block main %}
     <div class="container" style="padding-top: 5%; padding-bottom: 3%">
         <div class="cat-blocks-container" style="text-align: center">
-        {% for p in products %}
-            {% if request.user|has_group:"shops" %}
-                {% addstr '/products/edit/' p.id as myurl %}
-            {% else %}
-                {% addstr '/product/' p.id  as  myurl %}
-            {% endif %}
+        {% for s in shops %}
             {% if forloop.first %} <div class="row justify-content-evenly"> {% endif %}
                 <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
                         <div class="product">
                             <figure class="product-media">
                                 <a href="#">
-                                    <img src="/media/{{ p.image }}" alt="Product image" style="height: 200px;width: 100%;" class="img-fluid">
+                                    <img src="/media/{{ s.image }}" alt="Product image" style="height: 200px;width: 100%;" class="img-fluid">
                                 </a>
                             </figure><!-- End .product-media -->
                             <div class="product-body" style="background: #23272b">
                                 <div class="product-cat">
-                                    <a>{{ p.category.name }}</a>
+                                    <a>{{ s.owner}}</a>
                                 </div><!-- End .product-cat -->
-                                <h2 class="product-title" style="color: white"><a>{{ p.name }}</a></h2>
-                                <a href="{{ myurl }}/" >Open Product</a>
+                                <h2 class="product-title" style="color: white"><a>{{ s.name }}</a></h2>
+                                <a href="{{ request.path }}{{ s.id }}/" >See Shop</a>
                             </div><!-- End .product-body -->
                         </div><!-- End .product -->
                 </div>
             {% if forloop.counter|divisibleby:4 %} </div><div class="row">{% endif %}
             {% if forloop.last %}</div>{% endif %}
             {% empty %}
-                <p class="btn btn-danger disabled btn-lg" style="color: white; margin-bottom: 10px; border-radius: 10px;"> Sorry, no products available! </p>
+                <p class="btn btn-danger disabled btn-lg" style="color: white; margin-bottom: 10px; border-radius: 10px;"> Sorry, no shops available! </p>
                 <br>
         {% endfor %}
         </div><!-- End .cat-blocks-container -->
