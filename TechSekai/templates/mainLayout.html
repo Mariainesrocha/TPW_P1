@@ -52,18 +52,12 @@
                             <div class="header-search-wrapper search-wrapper-wide">
                                 <div class="select-custom">
                                     <select id="cat" name="category">
-                                        <option value="">All Categories</option>
-                                        <option value="1">Smartphones</option>
-                                        <option value="2">- Models</option>
-                                        <option value="3">- Accessories</option>
-                                        <option value="4">Smartwatches</option>
-                                        <option value="5">Televisions</option>
-                                        <option value="6">- SmartTv</option>
-                                        <option value="7">- Regular Tvs</option>
-                                        <option value="8">Sound</option>
-                                        <option value="9">- Headphones</option>
-                                        <option value="10">- Speakers</option>
-                                        <option value="11">Drones</option>
+                                        <option value="all">All Categories</option>
+                                        {% if all_categories %}
+                                            {% for c in all_categories %}
+                                                <option value="{{ c.name }}">{{ c.name }}</option>
+                                            {% endfor %}
+                                        {% endif %}
                                     </select>
                                 </div>
                                  <label for="q" class="sr-only">Search</label>
@@ -78,57 +72,25 @@
                 <div class="header-right">
                     <div class="header-dropdown-link">
 
-                    {% if not request.user|has_group:"shops" %}     <!-- TODO: ADD and not request.user.is_authenticated -->
+                    {% if not request.user|has_group:"shops" %}
                             <a href="{% url 'wishlist' %}" class="wishlist-link">
                                 <i class="icon-heart-o"></i>
-                                <span class="wishlist-count">3</span>
                                 <span class="wishlist-txt">Wishlist</span>
+                                {% if request.user.is_authenticated and wishList %}
+                                    <span class="wishlist-count">{{ wishList }}</span>
+                                {% else %}
+                                    <span class="wishlist-count">0</span>
+                                {% endif %}
                             </a>
-
-                            <div class="dropdown cart-dropdown">
-                                <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                                   aria-haspopup="true" aria-expanded="false" data-display="static">
-                                    <i class="icon-shopping-cart"></i>
-                                    <span class="cart-count">2</span>
-                                    <span class="cart-txt">Cart</span>
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <div class="dropdown-cart-products">
-                                        <div class="product">
-                                            <div class="product-cart-details">
-                                                <h4 class="product-title">
-                                                    <a href="#">Product Example</a>
-                                                </h4>
-
-                                                <span class="cart-product-info">
-                                                        <span class="cart-product-qty">1</span>
-                                                        x 84.00€
-                                                    </span>
-                                            </div><!-- End .product-cart-details -->
-
-                                            <figure class="product-image-container">
-                                                <a href="#" class="product-image">
-                                                    <img src="https://bludiode.com/30721-large_default/xiaomi-mi-11-ultra-12-gb-512-gb-branco.jpg"
-                                                         alt="product">
-                                                </a>
-                                            </figure>
-                                            <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                                        </div><!-- End .product -->
-                                    <div class="dropdown-cart-total">
-                                        <span>Total</span>
-
-                                        <span class="cart-total-price">160.00€</span>
-                                    </div><!-- End .dropdown-cart-total -->
-
-                                    <div class="dropdown-cart-action">
-                                        <a href="{% url 'cart' %}" class="btn btn-primary">View Cart</a>
-                                        <a href="{% url 'checkout' %}" class="btn btn-outline-primary-2"><span>Checkout</span><i
-                                                class="icon-long-arrow-right"></i></a>
-                                    </div><!-- End .dropdown-cart-total -->
-                                </div><!-- End .dropdown-menu -->
-                            </div><!-- End .cart-dropdown -->
-                            </div>
+                            <a href="{% url 'cart' %}" class="wishlist-link">
+                                <i class="icon-shopping-cart"></i>
+                                <span class="cart-txt">Cart</span>
+                                {% if request.user.is_authenticated and cart %}
+                                    <span class="wishlist-count">{{ cart }}</span>
+                                {% else %}
+                                    <span class="wishlist-count">0</span>
+                                {% endif %}
+                            </a>
                         {% endif %}
 
                         {% if user.is_authenticated %}
@@ -138,22 +100,26 @@
                                 <span style="font-size: 12px" class="wishlist-txt"><strong>{{ user.username }}</strong></span>
                                 </a>
                                 <ul class="dropdown-menu" style="text-align: center; font-size: 12px">
-                                    <li><a style="color: #1d84ea" href="{% url 'account' %}">My Account</a></li>
+                                    {% if request.user|has_group:"shops" %}
+                                        {% define '/shop/account/' as my_url %}
+                                    {% else %}
+                                        {% define '/account/' as  my_url %}
+                                    {% endif %}
+                                    <li><a style="color: #1d84ea" href="{{ my_url }}">My Account</a></li>
                                     <li><a style="color: red" href="{% url 'logout' %}">Logout</a></li>
                                 </ul>
                             </div>
-
-
-
                         {% else %}
                             <a href="{% url 'login' %}" class="wishlist-link">
                             <i class="icon-user"></i>
                             <span class="wishlist-txt">User</span>
                             </a>
                         {% endif %}
-
-
-
+                        <div style="padding-left: 10% ; border-right: 2px solid gray; height: 55px;"> </div>
+                        <a href="{% url 'add_shop' %}" class="wishlist-link">
+                            <i class="fa fa-store-alt"></i>
+                            <span class="wishlist-txt" style="text-align: center">Shop Register</span>
+                        </a>
                     </div>
                 </div><!-- End .header-right -->
             </div><!-- End .container -->
@@ -171,197 +137,13 @@
                         <div class="dropdown-menu {% if '/' == request.path %} show {% endif %}">
                             <nav class="side-nav">
                                 <ul class="menu-vertical sf-arrows">
-                                    <li class="megamenu-container">
-                                        <a class="sf-with-ul" href="#">Computers</a>
-
-                                        <div class="megamenu">
-                                            <div class="row no-gutters">
-                                                <div class="col-md-8">
-                                                    <div class="menu-col">
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <div class="menu-title">Desktop</div>
-                                                                <!-- End .menu-title -->
-                                                                <ul>
-                                                                    <li><a href="#">Tower</a></li>
-                                                                    <li><a href="#">All-in-one</a></li>
-                                                                    <li><a href="#">Gaming</a></li>
-                                                                    <li><a href="#">Mini</a></li>
-                                                                    <li><a href="#">Apple</a></li>
-                                                                </ul>
-                                                            </div><!-- End .col-md-6 -->
-
-                                                            <div class="col-md-6">
-                                                                <div class="menu-title">Laptops</div>
-                                                                <!-- End .menu-title -->
-                                                                <ul>
-                                                                    <li><a href="#">Essential</a></li>
-                                                                    <li><a href="#">Mobility</a></li>
-                                                                    <li><a href="#">Hybrid</a></li>
-                                                                    <li><a href="#">Professional</a></li>
-                                                                    <li><a href="#">Gaming</a></li>
-                                                                </ul>
-                                                            </div><!-- End .col-md-6 -->
-                                                        </div><!-- End .row -->
-                                                    </div><!-- End .menu-col -->
-                                                </div><!-- End .col-md-8 -->
-
-                                            </div><!-- End .row -->
-                                        </div><!-- End .megamenu -->
-                                    </li>
-                                    <li class="megamenu-container">
-                                        <a class="sf-with-ul" href="#">Smartphones</a>
-
-                                        <div class="megamenu">
-                                            <div class="row no-gutters">
-                                                <div class="col-md-8">
-                                                    <div class="menu-col">
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <div class="menu-title">Android Models</div>
-                                                                <!-- End .menu-title -->
-                                                                <ul>
-                                                                    <li><a href="#">Samsung</a></li>
-                                                                    <li><a href="#">Asus</a></li>
-                                                                    <li><a href="#">OnePlus</a></li>
-                                                                    <li><a href="#">Xiaomi</a></li>
-                                                                    <li><a href="#">Huawei</a></li>
-                                                                    <li><a href="#">TCL</a></li>
-                                                                    <li><a href="#">Alcatel</a></li>
-                                                                </ul>
-
-                                                                <div class="menu-title">IOS Models</div>
-                                                                <!-- End .menu-title -->
-                                                                <ul>
-                                                                    <li><a href="#">All Apple Models</a></li>
-                                                                </ul>
-                                                            </div><!-- End .col-md-6 -->
-
-                                                            <div class="col-md-6">
-                                                                <div class="menu-title">Accessories</div>
-                                                                <!-- End .menu-title -->
-                                                                <ul>
-                                                                    <li><a href="#">Phone & Cellphone Cases</a></li>
-                                                                    <li><a href="#">Cellphone Chargers </a></li>
-                                                                    <li><a href="#">Tempered glass </a></li>
-                                                                </ul>
-                                                            </div><!-- End .col-md-6 -->
-                                                        </div><!-- End .row -->
-                                                    </div><!-- End .menu-col -->
-                                                </div><!-- End .col-md-8 -->
-
-                                                <div class="col-md-4">
-                                                    <div class="banner banner-overlay">
-                                                        <a href="#" class="banner banner-menu">
-                                                            <img src="{% static 'imgs/13/menu/banner-1.jpg' %}"
-                                                                 alt="Banner">
-                                                        </a>
-                                                    </div><!-- End .banner banner-overlay -->
-                                                </div><!-- End .col-md-4 -->
-                                            </div><!-- End .row -->
-                                        </div><!-- End .megamenu -->
-                                    </li>
-                                    <li class="megamenu-container">
-                                        <a class="sf-with-ul" href="#">Televisions</a>
-
-                                        <div class="megamenu">
-                                            <div class="row no-gutters">
-                                                <div class="col-md-8">
-                                                    <div class="menu-col">
-                                                        <div class="row">
-                                                            <div class="col-md-3">
-                                                                <div class="menu-title">Technology</div>
-                                                                <!-- End .menu-title -->
-                                                                <ul>
-                                                                    <li><a href="#">Ultra HD 8k</a></li>
-                                                                    <li><a href="#">Ultra HD 4k</a></li>
-                                                                    <li><a href="#">QLED | ULED</a></li>
-                                                                    <li><a href="#">OLED</a></li>
-                                                                    <li><a href="#">NanoCell</a></li>
-                                                                </ul>
-                                                            </div><!-- End .col-md-6 -->
-
-                                                            <div class="col-md-3">
-                                                                <div class="menu-title">Dimension</div>
-                                                                <!-- End .menu-title -->
-                                                                <ul>
-                                                                    <li><a href="#">75" or Superior</a></li>
-                                                                    <li><a href="#">60" to 74"</a></li>
-                                                                    <li><a href="#">51" to 59"</a></li>
-                                                                    <li><a href="#">33" to 50"</a></li>
-                                                                    <li><a href="#">32" or Inferior</a></li>
-                                                                </ul>
-                                                            </div>
-
-
-                                                            <div class="col-md-3">
-                                                                <div class="menu-title">Brand</div>
-                                                                <!-- End .menu-title -->
-                                                                <ul>
-                                                                    <li><a href="#">LG</a></li>
-                                                                    <li><a href="#">Samsung</a></li>
-                                                                    <li><a href="#">Sony</a></li>
-                                                                    <li><a href="#">Philips</a></li>
-                                                                    <li><a href="#">Hisense</a></li>
-                                                                </ul>
-                                                            </div><!-- End .col-md-6 -->
-
-                                                            <div class="col-md-3">
-                                                                <div class="menu-title">Type</div>
-                                                                <!-- End .menu-title -->
-                                                                <ul>
-                                                                    <li><a href="#">SmartTv</a></li>
-                                                                    <li><a href="#">RegularTv</a></li>
-                                                                </ul>
-                                                            </div>
-                                                        </div><!-- End .row -->
-                                                    </div><!-- End .menu-col -->
-                                                </div><!-- End .col-md-8 -->
-
-                                            </div><!-- End .row -->
-                                        </div><!-- End .megamenu -->
-                                    </li>
-                                    <li class="megamenu-container">
-                                        <a class="sf-with-ul" href="#">Sound</a>
-
-                                        <div class="megamenu">
-                                            <div class="menu-col">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="menu-title">Headphones</div><!-- End .menu-title -->
-                                                        <ul>
-                                                            <li><a href="#">Bluetooth</a></li>
-                                                            <li><a href="#">Hi-Fi</a></li>
-                                                            <li><a href="#">Noise Cancelling</a></li>
-                                                        </ul>
-                                                    </div><!-- End .col-md-4 -->
-
-                                                    <div class="col-md-4">
-                                                        <div class="menu-title">Earbuds</div><!-- End .menu-title -->
-                                                        <ul>
-                                                            <li><a href="#">True Wireless</a></li>
-                                                            <li><a href="#">Bluetooth</a></li>
-                                                            <li><a href="#">Sports</a></li>
-                                                            <li><a href="#">With Wire</a></li>
-                                                        </ul>
-                                                    </div><!-- End .col-md-4 -->
-
-                                                    <div class="col-md-4">
-                                                        <div class="menu-title">Speakers</div><!-- End .menu-title -->
-                                                        <ul>
-                                                            <li><a href="#">Virtual Assistants</a></li>
-                                                            <li><a href="#">Bluetooth</a></li>
-                                                            <li><a href="#">Portable</a></li>
-                                                            <li><a href="#">Hi-Fi</a></li>
-                                                            <li><a href="#">Multiroom</a></li>
-                                                        </ul>
-                                                    </div><!-- End .col-md-4 -->
-                                                </div><!-- End .row -->
-                                            </div><!-- End .menu-col -->
-                                        </div><!-- End .megamenu -->
-                                    </li>
-                                    <li><a href="#">Smartwatches</a></li>
-                                    <li><a href="#">Drones</a></li>
+                                    {% if all_categories %}
+                                        {% for c in all_categories %}
+                                            <li>
+                                                <a class="sf-with-ul" href="/search/category/{{ c.name }}/"> {{ c.name }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    {% endif %}
                                 </ul><!-- End .menu-vertical -->
                             </nav><!-- End .side-nav -->
                         </div><!-- End .dropdown-menu -->
@@ -395,6 +177,14 @@
                                 </li>
                                 <li class="megamenu-container">
                                     <a href="{% url 'add_product' %}" class="">Add Products</a>
+                                    <div class=""></div><!-- End .megamenu -->
+                                </li>
+                                <li class="megamenu-container">
+                                    <a href="{% url 'items' %}" class="">My Items</a>
+                                    <div class=""></div><!-- End .megamenu -->
+                                </li>
+                                <li class="megamenu-container">
+                                    <a href="{% url 'add_item' %}" class="">Add Item</a>
                                     <div class=""></div><!-- End .megamenu -->
                                 </li>
                             {% endif %}

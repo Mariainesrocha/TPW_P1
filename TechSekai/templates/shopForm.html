@@ -1,0 +1,44 @@
+{% extends 'mainLayout.html' %}
+{% block main %}
+    <h2 style="padding-left: 20%; padding-top: 2%; color: #39f" > {{ page }} shop </h2>
+    {% if msg %}
+        <div class="alert alert-success" role="alert">
+            <strong>Success: </strong> {{ msg }}
+        </div>
+    {% elif msgErr %}
+        <div class="alert alert-danger" role="alert">
+            <strong>Error: </strong> {{ msgErr }}
+        </div>
+    {% else %}
+        <form action="." method="POST" style="padding: 2% 20%;" enctype='multipart/form-data'>
+            {% csrf_token %}
+            {% for form in forms %}
+                {% if forloop.counter == 1 %}
+                    <h4> Shop Details</h4>
+                {% elif forloop.counter == 2 %}
+                    <h4> Address Details</h4>
+                {% elif forloop.counter == 3 %}
+                    <h4> Owner Details</h4>
+                {% endif %}
+                {% for field in form %}
+                    <div class="form-group row">
+                        <label class="col-sm-2"> {{ field.label_tag }}</label>
+                        <div class="col-md-4">
+                            {{ field }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% if page == 'Add' %}
+                <div class="form-group" align="center">
+                    <input class="btn btn-primary rounded btn-sm" type="submit" value="Create">
+                </div>
+            {% else %}
+                <div class="form-group" align="center">
+                    <input class="btn btn-primary rounded btn-sm" type="submit" value="Update Account">
+                    <a class="btn btn-danger rounded btn-sm" href="/shops/delete/" role="button">Delete Account</a>
+                </div>
+            {% endif %}
+        </form>
+    {% endif %}
+{% endblock %}

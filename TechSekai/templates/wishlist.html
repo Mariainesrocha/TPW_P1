@@ -57,13 +57,13 @@
 
 						<tbody>
 
-                             {% for prod in wishlist %}
+                        {% for prod in wishlist %}
                             <tr>
 								<td class="product-col">
 									<div class="product">
 										<figure class="product-media">
 											<a href="#">
-												<img src="{% static 'imgs/logo.png'  %}" alt="Product image">
+												<img src="/media/{{ prod.image }}" alt="Product image">
 											</a>
 										</figure>
 

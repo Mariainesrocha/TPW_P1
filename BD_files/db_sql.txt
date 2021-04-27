@@ -26,7 +26,7 @@ CREATE TABLE "TechSekai_product" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMEN
 --
 -- Create model User
 --
-CREATE TABLE "TechSekai_user" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "gender" varchar(20) NULL, "age" integer unsigned NULL CHECK ("age" >= 0), "phone_number" bigint unsigned NULL CHECK ("phone_number" >= 0), "avatar" varchar(100) NULL, "role" varchar(10) NULL, "address_id" integer NULL REFERENCES "TechSekai_address" ("id") DEFERRABLE INITIALLY DEFERRED, "django_user_id" integer NOT NULL UNIQUE REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "TechSekai_user" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "gender" varchar(20) NULL, "age" integer unsigned NULL CHECK ("age" >= 0), "phone_number" bigint unsigned NULL CHECK ("phone_number" >= 0), "avatar" varchar(100) NULL, "address_id" integer NULL REFERENCES "TechSekai_address" ("id") DEFERRABLE INITIALLY DEFERRED, "django_user_id" integer NOT NULL UNIQUE REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED);
 --
 -- Create model WishList
 --
@@ -35,7 +35,7 @@ CREATE TABLE "TechSekai_wishlist_prods" ("id" integer NOT NULL PRIMARY KEY AUTOI
 --
 -- Create model Shop
 --
-CREATE TABLE "TechSekai_shop" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(40) NOT NULL, "phone_number" bigint unsigned NOT NULL CHECK ("phone_number" >= 0), "website" varchar(40) NULL, "opening_hours" time NULL, "certified" bool NOT NULL, "image" varchar(100) NULL, "address_id" integer NULL REFERENCES "TechSekai_address" ("id") DEFERRABLE INITIALLY DEFERRED, "owner_id" integer NOT NULL UNIQUE REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "TechSekai_shop" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(40) NOT NULL, "phone_number" bigint unsigned NULL CHECK ("phone_number" >= 0), "website" varchar(40) NULL, "opening_hours" time NULL, "certified" bool NOT NULL, "image" varchar(100) NULL, "address_id" integer NULL REFERENCES "TechSekai_address" ("id") DEFERRABLE INITIALLY DEFERRED, "owner_id" integer NOT NULL UNIQUE REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED);
 --
 -- Create model Order
 --
@@ -43,7 +43,7 @@ CREATE TABLE "TechSekai_order" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
 --
 -- Add field product to item
 --
-CREATE TABLE "new__TechSekai_item" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "price" integer unsigned NOT NULL CHECK ("price" >= 0), "stock" integer unsigned NOT NULL CHECK ("stock" >= 0), "product_id" integer NOT NULL UNIQUE REFERENCES "TechSekai_product" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "new__TechSekai_item" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "price" integer unsigned NOT NULL CHECK ("price" >= 0), "stock" integer unsigned NOT NULL CHECK ("stock" >= 0), "product_id" integer NOT NULL REFERENCES "TechSekai_product" ("id") DEFERRABLE INITIALLY DEFERRED);
 INSERT INTO "new__TechSekai_item" ("id", "price", "stock", "product_id") SELECT "id", "price", "stock", NULL FROM "TechSekai_item";
 DROP TABLE "TechSekai_item";
 ALTER TABLE "new__TechSekai_item" RENAME TO "TechSekai_item";
@@ -57,13 +57,15 @@ CREATE INDEX "TechSekai_wishlist_prods_product_id_4b6c3bdb" ON "TechSekai_wishli
 CREATE INDEX "TechSekai_shop_address_id_177d8350" ON "TechSekai_shop" ("address_id");
 CREATE INDEX "TechSekai_order_item_id_91f209bd" ON "TechSekai_order" ("item_id");
 CREATE INDEX "TechSekai_order_user_id_51703258" ON "TechSekai_order" ("user_id");
+CREATE INDEX "TechSekai_item_product_id_913b79b5" ON "TechSekai_item" ("product_id");
 --
 -- Add field shop to item
 --
-CREATE TABLE "new__TechSekai_item" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "price" integer unsigned NOT NULL CHECK ("price" >= 0), "stock" integer unsigned NOT NULL CHECK ("stock" >= 0), "product_id" integer NOT NULL UNIQUE REFERENCES "TechSekai_product" ("id") DEFERRABLE INITIALLY DEFERRED, "shop_id" integer NOT NULL REFERENCES "TechSekai_shop" ("id") DEFERRABLE INITIALLY DEFERRED);
+CREATE TABLE "new__TechSekai_item" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "price" integer unsigned NOT NULL CHECK ("price" >= 0), "stock" integer unsigned NOT NULL CHECK ("stock" >= 0), "product_id" integer NOT NULL REFERENCES "TechSekai_product" ("id") DEFERRABLE INITIALLY DEFERRED, "shop_id" integer NOT NULL REFERENCES "TechSekai_shop" ("id") DEFERRABLE INITIALLY DEFERRED);
 INSERT INTO "new__TechSekai_item" ("id", "price", "stock", "product_id", "shop_id") SELECT "id", "price", "stock", "product_id", NULL FROM "TechSekai_item";
 DROP TABLE "TechSekai_item";
 ALTER TABLE "new__TechSekai_item" RENAME TO "TechSekai_item";
+CREATE INDEX "TechSekai_item_product_id_913b79b5" ON "TechSekai_item" ("product_id");
 CREATE INDEX "TechSekai_item_shop_id_f22b7cac" ON "TechSekai_item" ("shop_id");
 --
 -- Create model Cart_Item

@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>TechSekai</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'imgs/icon_logo.png' %}">
+    <meta name="msapplication-TileColor" content="#cc9966">
+    <meta name="msapplication-config" content="assets/images/icons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="{% static 'vendor/line-awesome/line-awesome/line-awesome/css/line-awesome.min.css' %}">
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/plugins/owl-carousel/owl.carousel.css' %}">
+    <link rel="stylesheet" href="{% static 'css/plugins/magnific-popup/magnific-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'css/plugins/jquery.countdown.css' %}">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="{% static 'css/style2.css' %}">
+    <link rel="stylesheet" href="{% static 'css/skins/skin-demo-13.css' %}">
+    <link rel="stylesheet" href="{% static 'css/demos/demo-13.css' %}">
+</head>
+
+<body>
+<header class="header header-10 header-intro-clearance">
+
+        <div class="header-middle">
+            <div class="container">
+                <div class="header-left" style="height: 100px">
+                    <a href="{% url 'home' %}" class="logo">
+                        <img src="{% static 'imgs/cut_logo.png' %}" alt="TechSekai" width="220" height="50px">
+                    </a>
+                </div>
+            </div>
+        </div><!-- End .header-middle -->
+        <main class="main">
+            <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"  style="background-image: url('{% static 'imgs/1.jpg' %}'); height:810px; padding-top: 3% !important;">
+            	<div class="container">
+            		<div class="form-box">
+                    <div class="form-tab">
+                        <ul class="nav nav-pills nav-fill nav-border-anim" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="register-tab" data-toggle="tab" href="#register" role="tab"
+                                   aria-controls="register" aria-selected="false">Shop Register</a>
+                            </li>
+                        </ul>
+                    {% if msg %}
+                        <div class="alert alert-success" role="alert">
+                            <strong>Success: </strong> {{ msg }}
+                        </div>
+                        <br>
+                        <div style="text-align: center">
+                            <a class="btn btn-primary rounded btn-sm" href="/login/" role="button">Login</a>
+                        </div>
+                    {% elif msgErr %}
+                        <div class="alert alert-danger" role="alert">
+                            <strong>Error: </strong> {{ msgErr }}
+                        </div>
+                        <br>
+                        <div style="text-align: center">
+                            <a class="btn btn-primary rounded btn-sm" href="/shops/add/" role="button">Register Again</a>
+                        </div>
+                    {% else %}
+                        <div class="tab-content" id="tab-content-5">
+                            <div class="tab-pane fade show active" id="register" role="tabpanel" aria-labelledby="register-tab">
+                                <form id="user_form" method="post" action=".">
+                                    {% csrf_token %}
+                                    {% for form in forms %}
+                                        {% for field in form %}
+                                            <div class="form-group">
+                                                <label for="register-email">{{ field.label_tag }}</label>
+                                                {{ field }}
+                                            </div><!-- End .form-group -->
+                                            {% if form.errors %} <span style="color: red">{{ field.errors }} </span>{% endif %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                    <div class="form-footer">
+                                        <button type="submit" class="btn btn-outline-primary-2" name="sign_up" value="sign_up">
+                                            <span>REGISTER</span>
+                                            <i class="icon-long-arrow-right"></i>
+                                        </button>
+
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="register-policy"
+                                                   required>
+                                            <label class="custom-control-label" for="register-policy">I agree to the <a
+                                                    href="#">privacy policy</a> *</label>
+                                        </div><!-- End .custom-checkbox -->
+                                    </div><!-- End .form-footer -->
+                                </form>
+                            </div><!-- .End .tab-pane -->
+                        </div><!-- End .tab-content -->
+                    {% endif %}
+                    </div><!-- End .form-tab -->
+                </div><!-- End .form-box -->
+            	</div><!-- End .container -->
+            </div><!-- End .login-page section-bg -->
+        </main><!-- End .main -->
+    <!-- Plugins JS File -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/jquery.hoverIntent.min.js' %}"></script>
+<script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'js/superfish.min.js' %}"></script>
+<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-input-spinner.js' %}"></script>
+<script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+<script src="{% static 'js/jquery.plugin.min.js' %}"></script>
+<script src="{% static 'js/jquery.countdown.min.js' %}"></script>
+
+<!-- Main JS File -->
+<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/demos/demo-13.js' %}"></script>
+</body>
+
+</html>

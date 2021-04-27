@@ -11,6 +11,7 @@ urlpatterns = [
     # GENERAL PAGES
     path('', views.home, name='home'),
     path('search/', views.search, name='search'),
+    path('search/<str:filter>/<str:value>/', views.search2, name='search2'),
     path('hot_deals/', views.hot_deals, name='hot_deals'),
     path('new_arrivals/', views.new_arrivals, name='new_arrivals'),
 
@@ -36,28 +37,27 @@ urlpatterns = [
     path('products/', views.list_products, name='products'),
     path('products/edit/<int:pid>/', views.edit_product, name='edit_product'),
     path('products/delete/<int:pid>/', views.delete_product, name='delete_product'),
+    path('items/', views.list_items, name='items'),
+    path('items/add/', views.add_item, name='add_item'),
+    path('items/delete/<int:id>/', views.delete_item, name='delete_item'),
+    path('items/edit/<int:id>/', views.edit_item, name='edit_item'),
 
     ## FAZER COMPRAS
     # path('account/order/', views.order, name='order'),
     path('account/shoppingcart/', views.cart, name='cart'),
-    path('account/checkout/', views.checkout, name='checkout'),
     path('account/wishlist', views.wishlist, name='wishlist'), ##TODO: PEDRO -> CONFIRMAR SE POSSO COLOCAR / NO FINAL URL
 
     ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA CONTA
-    # path('sign_up/', views.create_account, name='create_account'),
-    # path('account/edit/', views.edit_account, name='edit_account')
     # TODO: Encontrei isto pra permitir mudanca de pass c os mecanismos do django como pra login e logout: https://docs.djangoproject.com/en/3.1/topics/auth/default/  -> ver em: Authentication Views¶
     # path('account/change_password/', auth_views.PasswordChangeView.as_view(template_name='change_pwd.html', success_url='/account/password_changed'), name='change_password'),
     # path('account/password_changed', views.password_changed, name='password_changed'),
 
 
-    ##TODO: NOTA ->  POSSIVEIS URLS + VIEWS NECESSARIAS PRA GESTAO DAS LOJAS
-    # path('shops/add/', views.add_shop, name='add_shop'),
+    ## GESTAO DAS LOJAS
+    path('shops/add/', views.add_shop, name='add_shop'),
     path('shops/', views.list_shops, name='list_shops'),
     path('shops/<int:sid>/', views.see_shop, name='see_shop'),
-    # path('shops/edit/<int:id>/', views.edit_shop, name='edit_shop'),
-    # path('shops/delete/<int:sid>/', views.delete_shop, name='delete_shop'),
+    path('shop/account/', views.edit_shop, name='edit_shop'),
+    path('shops/delete/', views.delete_shop, name='delete_shop'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-## TODO: !!!!!!!!!!!!! IDEIA INTERESSANTE SERIA USAR AS SESSION COOKIES DO DJANGO N SO PRA PESQUISAS, MAS PRA GUARDAR OS PRODUTOS VISTOS RECENTEMENTE, NAO ADICIONADOS AO CARRINHO

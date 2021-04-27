@@ -1,14 +1,12 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth import models as auth_models
-from django.db.models import UniqueConstraint
 
 GENDER = [
     ('M', 'Male'),
     ('F', 'Female'),
     ('O', 'Other/Not specified')
 ]
-
 
 ORDER_STATE = [
     ('ORDERED', 'Processing order'),
@@ -22,7 +20,9 @@ ORDER_STATE = [
 PAYMENT_METHOD = [
     ('Credit Card', 'Credit Card'),
     ('PayPal', 'PayPal'),
-    ('ATM ', 'ATM')
+    ('ATM ', 'ATM'),
+    ('VISA', 'VISA'),
+    ('ApplePay', 'ApplePay'),
 ]
 
 
@@ -33,7 +33,6 @@ class Address(models.Model):
     street = models.CharField(max_length=100)
     door = models.IntegerField()
     floor = models.IntegerField()
-    UniqueConstraint(fields=['street', 'door', 'floor'], name='unique_address')
 
     def __str__(self):
         return self.street + " Nº " + str(self.door) + " " + str(self.floor) + " ; " + self.zip_code + " , " + self.city + " (" + self.country + ")"
@@ -57,12 +56,11 @@ class User(models.Model):
 
 class Shop(models.Model):
     name = models.CharField(max_length=40, null=False)
-    owner = models.OneToOneField(auth_models.User, on_delete=models.CASCADE) #TODO: DESCOMENTAR
-    phone_number = models.PositiveBigIntegerField()
+    owner = models.OneToOneField(auth_models.User, on_delete=models.CASCADE)
+    phone_number = models.PositiveBigIntegerField(null=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True)
     website = models.URLField(max_length=40, null=True)
     opening_hours = models.TimeField(null=True)
-    certified = models.BooleanField(null=False)
     image = models.ImageField(null=True, upload_to='images/')
 
     def __str__(self):
@@ -94,9 +92,7 @@ class Product(models.Model):
     image = models.ImageField(null=True, default='logo.png', upload_to='images/', blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
-    lowest_price = models.IntegerField(null=False, default=0)
-
-    UniqueConstraint(fields=['reference_number', 'brand', 'name'], name='unique_product')
+    lowest_price = models.IntegerField(null=False, default=100000000000000000000)
 
     def __str__(self):
         return " [ " + str(self.reference_number) + " ] " + self.name + ", " + self.brand.name
@@ -147,9 +143,3 @@ class Order(models.Model):
 
     def __str__(self):
         return self.user.django_user.first_name + ", item: " + self.item.product.name
-
-
-################################## LINKS Q PODEM VIR A SER UTEIS
-'''
-https://realpython.com/manage-users-in-django-admin/#model-permissions
-'''

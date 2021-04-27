@@ -5,7 +5,7 @@
             <h3><b> Product Details : </b></h3>
             <hr>
             <p>Category: {{ prod.category }}</p>
-            <img src="{% static "imgs/"%}{{ prod.image }}" alt="Product image" style="height: 200px;width: 200px;" class="img-fluid">
+            <img src="/media/{{ prod.image }}" alt="Product image" style="height: 200px;width: 200px;" class="img-fluid">
             {% if not wishlist %}
                 <a href="/add_to_wishlist/{{ prod.id }}">Add to WishList</a>
                 {% else %}

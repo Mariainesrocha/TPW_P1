@@ -3,7 +3,7 @@
     {% load static %}
     {% if success %}
         <div class="container">
-        <h3 style="color:green"> Your Order was Submitted Succefully!</h3>
+        <h3 style="color:green"> Your Order was Submitted Successfully!</h3>
         <a href="/account/"><u> You can check the order status in your account's 'ORDERS' Tab</u></a>
         </div>
     {% else %}
@@ -11,7 +11,7 @@
             <h3><b> Product Details : </b></h3>
             <hr>
             <p>Category: {{ item.product.category }}</p>
-            <img src="{% static "imgs/"%}{{ item.product.image }}" alt="Product image" style="height: 200px;width: 200px;" class="img-fluid">
+            <img src="/media/{{ item.product.image }}" alt="Product image" style="height: 200px;width: 200px;" class="img-fluid">
             <p>Brand: {{ item.product.brand }}</p>
             <p>Model: {{ item.product.name }}</p>
             <p>Details: {{ item.product.details }}</p>

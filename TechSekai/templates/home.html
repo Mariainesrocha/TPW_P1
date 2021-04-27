@@ -1,5 +1,7 @@
 {% extends "mainLayout.html" %}
 {% load static %}
+{% load auth_extras %}
+
 {% block main %}
 <div class="intro-slider-container">
     <div class="intro-slider owl-carousel owl-simple owl-nav-inside" data-toggle="owl" data-owl-options='{
@@ -21,11 +23,6 @@
                                     <span class="text-primary">$999<sup>,99</sup></span>
                                 </span>
                         </h1><!-- End .intro-title -->
-
-                        <a href="#" class="btn btn-outline-primary-2">
-                            <span>Shop Now</span>
-                            <i class="icon-long-arrow-right"></i>
-                        </a>
                     </div><!-- End .col-auto offset-lg-3 -->
                 </div><!-- End .row -->
             </div><!-- End .container intro-content -->
@@ -42,11 +39,6 @@
                                     <span class="text-primary">$29<sup>,99</sup></span>
                                 </span>
                         </h1><!-- End .intro-title -->
-
-                        <a href="#" class="btn btn-outline-primary-2">
-                            <span>Shop Now</span>
-                            <i class="icon-long-arrow-right"></i>
-                        </a>
                     </div><!-- End .col-auto offset-lg-3 -->
                 </div><!-- End .row -->
             </div><!-- End .container intro-content -->
@@ -63,11 +55,6 @@
                                     <span class="text-primary">$180<sup>,99</sup></span>
                                 </span>
                         </h1><!-- End .intro-title -->
-
-                        <a href="#" class="btn btn-outline-primary-2">
-                            <span>Shop Now</span>
-                            <i class="icon-long-arrow-right"></i>
-                        </a>
                     </div><!-- End .col-auto offset-lg-3 -->
                 </div><!-- End .row -->
             </div><!-- End .container intro-content -->
@@ -80,16 +67,16 @@
 <div class="mb-4"></div><!-- End .mb-2 -->
 
 <div class="container">
-    {% if categories %}
+    {% if categories and not request.user|has_group:"shops" %}
     <h2 class="title text-center mb-2">Explore Popular Categories</h2><!-- End .title -->
     <div class="cat-blocks-container">
         <div class="row">
              {% for c in categories %}
             <div class="col-6 col-sm-4 col-lg-2">
-                <a href="#" class="cat-block">
+                <a href="search/category/{{ c.name }}/" class="cat-block">
                     <figure>
                             <span>
-                                <img src="{% static "imgs/"%}{{ c.image }}" alt="Category image">
+                                <img src="/media/{{ c.image }}" alt="Category image">
                             </span>
                     </figure>
                     <h3 class="cat-block-title"> {{ c.name }}</h3><!-- End .cat-block-title -->
@@ -101,7 +88,7 @@
     {% endif %}
 </div><!-- End .container -->
 
-{% if brands_list %}
+{% if brands_list and not request.user|has_group:"shops"%}
     <div class="container">
 <h2 class="title title-border mb-5">Shop by Brands</h2><!-- End .title -->
 <div class="owl-carousel mb-5 owl-simple" data-toggle="owl"
@@ -135,7 +122,7 @@
         }'>
 
     {%  for brand in brands_list %}
-        <a href="" class="brand" style="background: #23272b;">
+        <a href="search/brand/{{ brand.name }}/" class="brand" style="background: #23272b;">
             <p style="color: whitesmoke"> {{ brand.name }}</p>
         </a>
     {% endfor %}
@@ -143,7 +130,7 @@
 </div><!-- End .container -->
 {% endif %}
 
-{% if shops_list %}
+{% if shops and not request.user|has_group:"shops"%}
 <div class="container">
     <h2 class="title title-border mb-5">Shop by Store</h2><!-- End .title -->
     <div class="owl-carousel mb-5 owl-simple" data-toggle="owl"
@@ -175,10 +162,9 @@
                     }
                 }
             }'>
-        {%  for shop in shops_list %}
-
-            <a href="{{ shop.website }}" class="brand">
-                <img src="{% static "imgs/"%}{{ shop.image }}" alt="{{ shop.name }}">
+        {%  for shop in shops %}
+            <a href="search/shop/{{ shop.name }}/" class="brand">
+                <img src="/media/{{ shop.image }}" alt="{{ shop.name }}">
             </a>
         {% endfor %}
     </div><!-- End .owl-carousel -->

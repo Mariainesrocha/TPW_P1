@@ -9,10 +9,10 @@
             <div align="center">
                 <img src="/media/{{ shop.image }}" alt="Shop image" style="height: 200px;width: 200px;" class="img-fluid">
             </div>
-            <p><span style="color: #39f; font-weight: bold">Owner:</span> {{ shop.owner }} </p>
-            <p><span style="color: #39f; font-weight: bold">Address:</span> {{ shop.address }} </p>
-            <p><span style="color: #39f; font-weight: bold">Phone Number: </span>{{ shop.phone_number }} </p>
-            <span style="color: #39f; font-weight: bold"> Website URL:</span> <a href="{{ shop.website }}">{{ shop.website }}</a>
-            <p><span style="color: #39f; font-weight: bold"> Opening Hours: </span> {{ shop.opening_hours }} </p>
+            <p><span style="color: #39f; font-weight: bold">Owner:</span>{% if shop.owner %} {{ shop.owner }}{% else %}  ---- {% endif %}</p>
+            <p><span style="color: #39f; font-weight: bold">Address:</span>{% if shop.address %} {{ shop.address }}{% else %}  ---- {% endif %} </p>
+            <p><span style="color: #39f; font-weight: bold">Phone Number: </span>{% if shop.phone_number %} {{ shop.phone_number }}{% else %}  ---- {% endif %}</p>
+            <span style="color: #39f; font-weight: bold"> Website URL:</span> {% if shop.website %} <a href="{{ shop.website }}">{{ shop.website }}</a> {% else %}<span> ---- </span>{% endif %}
+            <p><span style="color: #39f; font-weight: bold"> Opening Hours: </span> {% if shop.opening_hours %} {{ shop.opening_hours }}{% else %}  ---- {% endif %} </p>
     </div>
 {% endblock %}

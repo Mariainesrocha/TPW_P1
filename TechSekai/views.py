@@ -1,14 +1,15 @@
 from django.core.cache import cache
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from TechSekai.forms import *
+from django.contrib.auth.models import Group
+from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
 
 
 # Create your views here.
 def home(request):
-    content = default_content(request)
+    content = home_content(request)
     return render(request, 'home.html', content)
 
 
@@ -52,19 +53,14 @@ def login_view(request):
     else:
         register_form = RegisterDjangoUserForm()
         login_form = LoginDjangoUserForm()
-    content = {'user_form': register_form, 'login_form': login_form, 'register_error': register_error,
-               'login_error': login_error}
+    content = {'user_form': register_form, 'login_form': login_form, 'register_error': register_error, 'login_error': login_error}
     return render(request, 'login.html', content)
 
 
 def new_arrivals(request):
     products = Product.objects.all().order_by("id")[0:20]
 
-    register_form = RegisterDjangoUserForm()
-    login_form = LoginDjangoUserForm()
     content = {
-        'user_form': register_form,
-        'login_form': login_form,
         'products': products,
         'page': 'New Arrivals'
     }
@@ -80,28 +76,35 @@ def hot_deals(request):
     return render(request, 'new_hot_items.html', content)
 
 
-## TODO: REFACTOR JUNTAR VIEW HOT DEALS C NEW_ARRIVALS -> o codigo é o mm
-
 def search(request):
     name = request.GET['name']
     category = request.GET['category']
-    ##TODO: TO BE IMPLEMENTED
-    '''if request.user.groups.filter(name='shops').exists(): 
+
+    if request.user.groups.filter(name='shops').exists():
         loggedShop = Shop.objects.get(owner=request.user)
         items = Item.objects.filter(shop=loggedShop)
 
-        products = [i.product for i in items if str(name).lower() in i.product.name.lower() or str(category).lower() in i.product.category.name.lower()]
-    else:'''
-    products = Product.objects.filter(name__icontains=name, category__name__icontains=category)
+        if category == 'all':
+            products = [i.product for i in items if str(name).lower() in i.product.name.lower()]
+        else:
+            products = [i.product for i in items if str(name).lower() in i.product.name.lower() or str(category).lower() in i.product.category.name.lower()]
+    else:
+        if category == 'all':
+            products = Product.objects.filter(name__icontains=name)
+        else:
+            products = Product.objects.filter(name__icontains=name, category__name__icontains=category)
 
-    content = {
-        'products': products,
-        'name': name,
-        'category': category,
-    }
-    return render(request, 'itemsList.html', content)
+    return render(request, 'prodsList.html', {'products': products})
 
 
+def search2(request, filter, value):
+    if filter == 'category':
+        products = Product.objects.filter(category__name__icontains=value)
+    elif filter == 'brand':
+        products = Product.objects.filter(brand__name__icontains=value)
+    elif filter == 'shop':
+        products = Product.objects.filter(item__shop__name__icontains=value)
+    return render(request, 'prodsList.html', {'products': products})
 
 
 def account_page(request):
@@ -138,6 +141,24 @@ def account_page(request):
                        'show_edit_account': show_edit_account, 'orders_list': orders_list})
     else:
         return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
+
+
+def loadAccountPageForms(user):
+    user_form = EditUserForm(initial={'username': user.django_user.username,
+                                      'email': user.django_user.email,
+                                      'phone_number': user.phone_number,
+                                      'age': user.age,
+                                      'gender': user.gender})
+    if user.address:
+        address_form = EditAddressForm(initial={'country': user.address.country,
+                                                'city': user.address.city,
+                                                'zip_code': user.address.zip_code,
+                                                'street': user.address.street,
+                                                'door': user.address.door,
+                                                'floor': user.address.floor})
+    else:
+        address_form = AddAddressForm()
+    return user_form, address_form
 
 
 def process_account_edit(user_form, user, updated):
@@ -193,50 +214,6 @@ def process_address_edit(address_form, user, updated):
     return updated
 
 
-def loadAccountPageForms(user):
-    user_form = EditUserForm(initial={'username': user.django_user.username,
-                                      'email': user.django_user.email,
-                                      'phone_number': user.phone_number,
-                                      'age': user.age,
-                                      'gender': user.gender})
-    if user.address:
-        address_form = EditAddressForm(initial={'country': user.address.country,
-                                                'city': user.address.city,
-                                                'zip_code': user.address.zip_code,
-                                                'street': user.address.street,
-                                                'door': user.address.door,
-                                                'floor': user.address.floor})
-    else:
-        address_form = AddAddressForm()
-    return user_form, address_form
-
-
-def registerShop(request):  # copiado do registerUser..mas precisa de mts alteracoes
-    register = False
-    if request.method == 'POST':
-        add_shop_form = AddShopForm(data=request.POST)
-
-        if add_shop_form.is_valid():
-            shop = Shop()
-            django_user = add_shop_form.save()
-            django_user.set_password(django_user.password)
-            try:
-                django_user.save()
-                shop.django_user = django_user
-                shop.save()
-                registered = True
-            except:  # If something fails
-                django_user.delete()
-                shop.delete()
-        else:
-            print(add_shop_form.errors)
-    else:
-        print("For some reason it is not a POST------------------------")
-
-    content = default_content(request)
-    return render(request, 'mainLayout.html', content)
-
-
 def add_product(request):
     if request.user.groups.filter(name='shops').exists():
         loggedShop = Shop.objects.get(owner=request.user)
@@ -256,7 +233,6 @@ def add_product(request):
                 if image is None:
                     image = 'images/logo.png'
 
-                # lowest_price = form.cleaned_data['lowest_price']      TODO: TRATAR
                 if category.name == 'Other':
                     new_cat = request.POST['new_cat']
                     category = Category(name=new_cat, totDevices=0)
@@ -268,8 +244,7 @@ def add_product(request):
                     brand.save()
 
                 try:
-                    p = Product(qty_sold=0, reference_number=reference_number, name=name, details=details,
-                                warehouse=warehouse, image=image, category=category, brand=brand)
+                    p = Product(qty_sold=0, lowest_price=price, reference_number=reference_number, name=name, details=details, warehouse=warehouse, image=image, category=category, brand=brand)
                     p.save()
 
                     c = Category.objects.get(name=category)
@@ -279,15 +254,84 @@ def add_product(request):
                     i = Item(price=price, shop=loggedShop, product=p)
                     i.save()
                 except:
-                    return render(request, 'forms.html',
-                                  {'msgErr': ' Product not inserted, try again later!', 'page': 'Add'})
-                return render(request, 'forms.html',
-                              {'msg': ' Product ' + p.name + ' inserted successfully!', 'page': 'Add'})
+                    return render(request, 'productForm.html', {'msgErr': ' Product not inserted, try again later!', 'page': 'Add', 'obj': 'Product'})
+                return render(request, 'productForm.html', {'msg': ' Product ' + p.name + ' inserted successfully!', 'page': 'Add', 'obj': 'Product'})
         else:
             form = AddProductForm()
-            return render(request, 'forms.html', {'form': form, 'page': 'Add'})
+            return render(request, 'productForm.html', {'form': form, 'page': 'Add', 'obj': 'Product'})
     else:
         return render(request, 'error.html')
+
+
+def add_item(request):
+    if request.user.groups.filter(name='shops').exists():
+        loggedShop = Shop.objects.get(owner=request.user)
+        if request.method == 'POST':
+            form = AddItem(request.POST)
+
+            if form.is_valid():
+                prod = form.cleaned_data['product']
+                stock = form.cleaned_data['stock']
+                price = form.cleaned_data['price']
+
+                try:
+                    i = Item(product=prod, shop=loggedShop, stock=stock, price=price)
+                    i.save()
+
+                    if i.price < prod.lowest_price:
+                       prod.lowest_price = i.price
+                       prod.save()
+
+                except:
+                    return render(request, 'productForm.html')
+                return render(request, 'productForm.html', {'msg': ' Item inserted successfully!', 'page': 'Add', 'obj': 'Item'})
+        else:
+            form = AddItem()
+            return render(request, 'productForm.html', {'form': form, 'page': 'Add', 'obj': 'Item'})
+    else:
+        return render(request, 'error.html')
+
+
+def edit_item(request, id):
+    if request.user.groups.filter(name='shops').exists():
+        loggedShop = Shop.objects.get(owner=request.user)
+        if request.method == 'POST':
+            i = Item.objects.get(id=id)
+            form = EditItem(request.POST, instance=i)
+
+            if form.is_valid():
+                form.save()
+                price = form.cleaned_data['price']
+
+                try:
+                    if price < i.product.lowest_price:
+                        i.product.lowest_price = price
+                        i.product.save()
+
+                except:
+                    return render(request, 'productForm.html',  {'msgErr': ' Error while updating, try again!', 'page': 'Edit', 'obj': 'Item'})
+                return render(request, 'productForm.html', {'msg': ' Item updated successfully!', 'page': 'Edit', 'obj': 'Item'})
+        else:
+            form = EditItem(instance=Item.objects.get(id=id))
+            return render(request, 'productForm.html', {'form': form, 'page': 'Edit', 'obj': 'Item', 'id': id})
+    else:
+        return render(request, 'error.html')
+
+
+def list_items(request):
+    if request.user.groups.filter(name='shops').exists():
+        loggedShop = Shop.objects.get(owner=request.user)
+        items = Item.objects.filter(shop=loggedShop)
+        return render(request, 'items_list.html', {'items': items})
+    else:
+        return render(request, 'error.html')
+
+
+def delete_item(request, id):
+    if request.user.groups.filter(name='shops').exists():
+        Item.objects.get(id=id).delete()
+        return redirect('items')
+    return render(request, 'error.html')
 
 
 def edit_product(request, pid):
@@ -320,13 +364,13 @@ def edit_product(request, pid):
                     b.save()
                     p.brand = b
                     p.save()
-                return render(request, 'forms.html',
-                              {'msg': 'Product ' + p.name + ' updated successfully!', 'page': 'Edit'})
+                return render(request, 'productForm.html',
+                              {'msg': 'Product ' + p.name + ' updated successfully!', 'page': 'Edit', 'obj': 'Product'})
         else:
             p = Product.objects.get(id=pid)
             form = EditProductForm(instance=p)
             form.fields['price'].initial = Item.objects.get(product=p).price
-            return render(request, 'forms.html', {'form': form, 'page': 'Edit', 'id': pid})
+            return render(request, 'productForm.html', {'form': form, 'page': 'Edit', 'obj': 'Product', 'id': pid})
     return render(request, 'error.html')
 
 
@@ -334,7 +378,7 @@ def delete_product(request, pid):
     if request.user.groups.filter(name='shops').exists():
         Product.objects.get(id=pid).delete()
         return redirect('products')
-    return render(request, 'error.html')  ## TODO: ACRESCENTAR POP UP DE CONFIRMACAO
+    return render(request, 'error.html')
 
 
 def list_products(request):
@@ -342,7 +386,8 @@ def list_products(request):
         loggedShop = Shop.objects.get(owner=request.user)
         items = Item.objects.filter(shop=loggedShop)
         p = [i.product for i in items]
-        return render(request, 'itemsList.html', {'products': p})
+        content =  {'products': p}
+        return render(request, 'prodsList.html', content)
     else:
         return render(request, 'error.html')
 
@@ -357,39 +402,110 @@ def see_shop(request, sid):
     return render(request, 'shopDetails.html', {'shop': shop})
 
 
-def delete_shop(request, sid):  ##TODO: meter msg a dizer q foi apagada c sucesso -> no caso da pag Admin
-    if request.user.username == 'Admin':
-        Shop.objects.get(id=sid).delete()
-        return redirect('home')
+def add_shop(request):
+    if request.method == 'POST':
+        register_form = RegisterDjangoUserForm(request.POST)
+        form = AddShopForm(request.POST)
+
+        if register_form.is_valid():
+            django_user = register_form.save()
+            django_user.set_password(django_user.password)
+            django_user.save()
+        else:
+            return render(request, 'shopRegister.html', {'forms': [form, register_form]})
+
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            phone = form.cleaned_data['phone_number']
+        else:
+            return render(request, 'shopRegister.html', {'forms': [form, register_form]})
+
+
+        try:
+            s = Shop(owner=django_user, phone_number=phone, name=name, image='images/logo.png')
+            s.save()
+
+        except:
+            return render(request, 'shopRegister.html', {'msgErr': ' Error while creating shop, try again!'})
+
+        my_group = Group.objects.get(name='shops')
+        my_group.user_set.add(django_user)
+
+        return render(request, 'shopRegister.html', {'msg': 'Shop registered, please login now!'})
+    else:
+        return render(request, 'shopRegister.html', {'forms': [AddShopForm(), RegisterDjangoUserForm()]})
+
+
+def edit_shop(request):
+    if request.user.groups.filter(name='shops').exists():
+        if request.method == 'POST':
+            s = Shop.objects.get(owner=request.user)
+            form = EditShopForm(request.POST, request.FILES, instance=s)
+            formA = EditAddressForm(request.POST, instance=s.address)
+            formO = EditDjangoUserForm(request.POST, instance=request.user)
+
+            if formO.is_valid():
+                formO.save()
+                print('Passou owner')
+
+            if formA.is_valid():
+                formA.save()
+                print('Passou address')
+
+            if form.is_valid():
+                form.save()
+                print('Passou shop')
+
+                if form.cleaned_data['image'] is None:
+                    image = 'images/logo.png'
+                    s.image = image
+                    s.save()
+
+                return render(request, 'shopForm.html',{'msg': 'Shop ' + s.name + ' updated successfully!', 'page': 'Edit'})
+            else:
+                return render(request, 'shopForm.html', {'msgErr': 'Error while updating!', 'page': 'Edit'})
+        else:
+            s = Shop.objects.get(owner=request.user)
+            form = EditShopForm(instance=s)
+            formA = EditAddressForm(instance=s.address)
+            formO = EditDjangoUserForm(instance=request.user)
+
+            return render(request, 'shopForm.html', {'forms': [form, formA, formO], 'page': 'Edit'})
+    else:
+        return render(request, 'error.html')
+
+
+def delete_shop(request):
     if request.user.groups.filter(name='shops').exists():
         Shop.objects.get(email=request.user.email).delete()
         return redirect('logout')
     return render(request, 'error.html')
 
 
-def default_content(request):
+def home_content(request):
     brands_list = cache.get('brands_list')
     hot_deals = cache.get('hot_deals')
     new_arrivals = cache.get('new_arrivals')
-    shops_list = cache.get('shops_list')
     categories = cache.get('categories')
-    if not (brands_list and hot_deals and new_arrivals and shops_list and categories):
+    shops = cache.get('shops')
+
+    if not (brands_list and hot_deals and new_arrivals and categories and shops):
         brands_list = Brand.objects.all().order_by('name')
         products = Product.objects.all()
         hot_deals = products.order_by("-qty_sold")[0:12]
         new_arrivals = products.order_by("id")[0:12]
-        shops_list = Shop.objects.filter(certified=True)
-        categories = Category.objects.all().order_by("-totDevices")[0:6]  # 6 categorias com mais produtos disponiveis
+        categories = Category.objects.all()
+        shops = Shop.objects.all()
 
         cache.set('brands_list', brands_list)
         cache.set('products', products)
         cache.set('hot_deals', hot_deals)
         cache.set('new_arrivals', new_arrivals)
-        cache.set('shops_list', shops_list)
         cache.set('categories', categories)
+        cache.set('shops',shops)
 
-    return {'brands_list': brands_list, 'shops_list': shops_list,
-            'hot_deals': hot_deals, 'new_arrivals': new_arrivals, 'categories': categories}
+    return {'brands_list': brands_list, 'categories': categories.order_by("-totDevices")[0:6],  # 6 categorias com mais produtos disponiveis
+            'hot_deals': hot_deals, 'new_arrivals': new_arrivals, 'all_categories': categories, 'shops': shops}
 
 
 def product_shops(request, prod_id):
@@ -421,16 +537,14 @@ def order_product(request, item_id):
                 qty = order_form.cleaned_data['qty']
                 payment_meth = order_form.cleaned_data['payment_meth']
 
-                # Verifications & Purchase
                 success, error_qty, error_address = proccess_order(user, item, qty, payment_meth)
         else:
             order_form = DoOrderForm(initial={'qty': 1})
 
-        return render(request, 'DoOrder.html',
-                      {'item': item, 'order_form': order_form,
-                       'error_address': error_address, 'error_qty': error_qty, 'success': success})
+        return render(request, 'DoOrder.html', {'item': item, 'order_form': order_form, 'error_address': error_address, 'error_qty': error_qty, 'success': success})
     else:
         return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
+
 
 def proccess_order(user,item, qty, payment_meth):
     success = error_qty = error_address = False
@@ -497,9 +611,9 @@ def rem_from_Cart(request, item_id):
         cart_items = Cart_Item.objects.filter(cart=user_cart, item=item)
         if len(cart_items) > 0:
             cart_items[0].delete()
-
-    # Maybe later, save cart items in cache when not authenticated?
-    return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
+    else:
+        # Maybe later, save cart items in cache when not authenticated?
+        return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
 
 
 def add_to_Wishlist(request, prod_id):
@@ -576,10 +690,6 @@ def cart(request):
         return HttpResponseRedirect('/login')
 
 
-
-
-
-
 def wishlist(request):
     if request.user.is_authenticated:
         user = User.objects.get(django_user=request.user)
@@ -602,51 +712,3 @@ def wishlist(request):
         return render(request, 'wishlist.html', {'wishlist': _wishlist, 'prod_stock': prod_stock})
     else:
         return HttpResponseRedirect('/login')
-
-def checkout(request):
-    return render(request, 'checkout.html')
-
-## TODO NOTA: USAR ISTO ANTES DE CADA VIEW Q NECESSITA DE LOGIN PARA GARANTIR CONTA É + FACIL
-# @login_required(login_url='/accounts/login/') -> caso tenham duvidas: https://docs.djangoproject.com/en/3.1/topics/auth/default/
-
-'''
-# usar import:
-from django.contrib.auth.decorators import user_passes_test
-
-
-def email_check(user):
-    return user.email.endswith('@example.com')
-
-@user_passes_test(email_check)
-def my_view(request):
-'''
-
-''' 
-NOT USED TO BE ERASED
-
-def registerOLD(request):
-    registered = False
-
-    if request.method == 'POST':
-        user_form = RegisterDjangoUserForm(data=request.POST)
-
-        if user_form.is_valid():
-            user = User()
-            django_user = user_form.save()
-            django_user.set_password(django_user.password)
-            try:
-                django_user.save()
-                user.django_user = django_user
-                user.save()
-                registered = True
-            except:  # If something fails
-                django_user.delete()
-                user.delete()
-        else:
-            print(user_form.errors)
-
-    else:
-        user_form = RegisterDjangoUserForm()
-
-    return render(request, 'Register.html', {'user_form': user_form, 'registered': registered})
-'''
