@@ -9,11 +9,6 @@ GENDER = [
     ('O', 'Other/Not specified')
 ]
 
-ROLES = [
-    ('A', 'Admin'),
-    ('C', 'Client'),
-    ('S', 'Shop')
-]
 
 ORDER_STATE = [
     ('ORDERED', 'Processing order'),
@@ -51,11 +46,8 @@ class User(models.Model):
     age = models.PositiveIntegerField(validators=[MaxValueValidator(100), MinValueValidator(1)], null=True, blank=True)
     phone_number = models.PositiveBigIntegerField(null=True, blank=True)
     avatar = models.ImageField(null=True, blank=True, upload_to='images/')
-    role = models.CharField(max_length=10, choices=ROLES, null=True, blank=True)    ## TODO: REMOVER ISTO NE?
     address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True, blank=True)
 
-    # to return a meaningful value when a unicode representation of a User model instance is requested.(?)
-    # See more: https://www.tangowithdjango.com/book/chapters/login.html
     def __unicode__(self):
         return self.django_user.username
 
@@ -112,7 +104,7 @@ class Product(models.Model):
 
 class Item(models.Model):
     price = models.PositiveIntegerField(null=False)
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
     stock = models.PositiveIntegerField(null=False, default=0)
 
@@ -154,7 +146,7 @@ class Order(models.Model):
     payment_meth = models.CharField(max_length=20, choices=PAYMENT_METHOD)
 
     def __str__(self):
-        return self.user.django_user.first_name
+        return self.user.django_user.first_name + ", item: " + self.item.product.name
 
 
 ################################## LINKS Q PODEM VIR A SER UTEIS

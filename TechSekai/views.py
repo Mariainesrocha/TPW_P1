@@ -1,4 +1,5 @@
 from django.core.cache import cache
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
@@ -101,33 +102,113 @@ def search(request):
     return render(request, 'itemsList.html', content)
 
 
+
+
 def account_page(request):
-    user = User.objects.get(django_user=request.user)
-    updated = False
-    if request.method == "POST":
-        user_form = EditUserForm(request.POST)
+    if request.user.is_authenticated:
+        user = User.objects.get(django_user=request.user)
+        orders_list = Order.objects.filter(user=user).order_by("-id")
+        user_form, address_form = loadAccountPageForms(user)
+        updated_user_form = False
+        updated_address_form = False
+        show_dashboard = False
+        show_address = False
+        show_edit_account = False
 
-        if user_form.is_valid():
-            # Update All Fields
-            user.django_user.username = user_form.cleaned_data['username']
-            user.django_user.email = user_form.cleaned_data['email']
-            user.phone_number = user_form.cleaned_data['phone_number']
-            user.age = user_form.cleaned_data['age']
-            user.gender = user_form.cleaned_data['gender']
-            user.django_user.save()
-            user.save()
-            updated = True
+        if request.method == "POST":
+            if 'account_edit' in request.POST:
+                user_form = EditUserForm(request.POST)
+                updated_user_form = process_account_edit(user_form, user, updated_user_form)
+                show_edit_account = True
+            elif 'address_create' in request.POST:
+                address_form = AddAddressForm(request.POST)
+                updated_address_form = process_address_create(address_form, user, updated_user_form)
+                show_address = True
+            elif 'address_edit' in request.POST:
+                address_form = EditAddressForm(request.POST)
+                updated_address_form = process_address_edit(address_form, user, updated_user_form)
+                show_address = True
         else:
-            print(user_form.errors)
+            show_dashboard = True
 
-    # POST or not, we load the Known Values
+        return render(request, 'dashboard.html',
+                      {'extra_user_form': user_form, 'address_form': address_form,
+                       'updated_user_form': updated_user_form, 'updated_address_form': updated_address_form,
+                       'show_dashboard': show_dashboard, 'show_address': show_address,
+                       'show_edit_account': show_edit_account, 'orders_list': orders_list})
+    else:
+        return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
+
+
+def process_account_edit(user_form, user, updated):
+    if user_form.is_valid():
+        # Update All Fields
+        user.django_user.username = user_form.cleaned_data['username']
+        user.django_user.email = user_form.cleaned_data['email']
+        user.phone_number = user_form.cleaned_data['phone_number']
+        user.age = user_form.cleaned_data['age']
+        user.gender = user_form.cleaned_data['gender']
+        user.django_user.save()
+        user.save()
+        updated = True
+    else:
+        print(user_form.errors)
+    return updated
+
+
+def process_address_create(address_form, user, updated):
+    if address_form.is_valid():
+        # Load All Fields
+        country = address_form.cleaned_data['country']
+        city = address_form.cleaned_data['city']
+        street = address_form.cleaned_data['street']
+        zip_code = address_form.cleaned_data['zip_code']
+        floor = address_form.cleaned_data['floor']
+        door = address_form.cleaned_data['door']
+
+        # Save Adress
+        new_address = Address(country=country, city=city, street=street, zip_code=zip_code, floor=floor, door=door)
+        new_address.save()
+        user.address = new_address
+        user.save()
+        updated = True
+    else:
+        print(address_form.errors)
+    return updated
+
+
+def process_address_edit(address_form, user, updated):
+    if address_form.is_valid():
+        # Update All Fields
+        user.address.country = address_form.cleaned_data['country']
+        user.address.city = address_form.cleaned_data['city']
+        user.address.street = address_form.cleaned_data['street']
+        user.address.zip_code = address_form.cleaned_data['zip_code']
+        user.address.floor = address_form.cleaned_data['floor']
+        user.address.door = address_form.cleaned_data['door']
+        user.save()
+        updated = True
+    else:
+        print(address_form.errors)
+    return updated
+
+
+def loadAccountPageForms(user):
     user_form = EditUserForm(initial={'username': user.django_user.username,
                                       'email': user.django_user.email,
                                       'phone_number': user.phone_number,
                                       'age': user.age,
                                       'gender': user.gender})
-
-    return render(request, 'dashboard.html', {'extra_user_form': user_form, 'updated': updated})
+    if user.address:
+        address_form = EditAddressForm(initial={'country': user.address.country,
+                                                'city': user.address.city,
+                                                'zip_code': user.address.zip_code,
+                                                'street': user.address.street,
+                                                'door': user.address.door,
+                                                'floor': user.address.floor})
+    else:
+        address_form = AddAddressForm()
+    return user_form, address_form
 
 
 def registerShop(request):  # copiado do registerUser..mas precisa de mts alteracoes
@@ -187,7 +268,8 @@ def add_product(request):
                     brand.save()
 
                 try:
-                    p = Product(qty_sold=0, reference_number=reference_number, name=name, details=details, warehouse=warehouse, image=image, category=category, brand=brand)
+                    p = Product(qty_sold=0, reference_number=reference_number, name=name, details=details,
+                                warehouse=warehouse, image=image, category=category, brand=brand)
                     p.save()
 
                     c = Category.objects.get(name=category)
@@ -197,8 +279,10 @@ def add_product(request):
                     i = Item(price=price, shop=loggedShop, product=p)
                     i.save()
                 except:
-                    return render(request, 'forms.html', {'msgErr': ' Product not inserted, try again later!', 'page': 'Add'})
-                return render(request, 'forms.html', {'msg': ' Product ' + p.name + ' inserted successfully!', 'page': 'Add'})
+                    return render(request, 'forms.html',
+                                  {'msgErr': ' Product not inserted, try again later!', 'page': 'Add'})
+                return render(request, 'forms.html',
+                              {'msg': ' Product ' + p.name + ' inserted successfully!', 'page': 'Add'})
         else:
             form = AddProductForm()
             return render(request, 'forms.html', {'form': form, 'page': 'Add'})
@@ -236,7 +320,8 @@ def edit_product(request, pid):
                     b.save()
                     p.brand = b
                     p.save()
-                return render(request, 'forms.html', {'msg': 'Product ' + p.name + ' updated successfully!', 'page': 'Edit'})
+                return render(request, 'forms.html',
+                              {'msg': 'Product ' + p.name + ' updated successfully!', 'page': 'Edit'})
         else:
             p = Product.objects.get(id=pid)
             form = EditProductForm(instance=p)
@@ -249,7 +334,7 @@ def delete_product(request, pid):
     if request.user.groups.filter(name='shops').exists():
         Product.objects.get(id=pid).delete()
         return redirect('products')
-    return render(request, 'error.html')        ## TODO: ACRESCENTAR POP UP DE CONFIRMACAO
+    return render(request, 'error.html')  ## TODO: ACRESCENTAR POP UP DE CONFIRMACAO
 
 
 def list_products(request):
@@ -265,7 +350,7 @@ def list_products(request):
 def list_shops(request):
     shops = Shop.objects.all()
     return render(request, 'shopsList.html', {'shops': shops})
-    
+
 
 def see_shop(request, sid):
     shop = Shop.objects.get(id=sid)
@@ -280,7 +365,7 @@ def delete_shop(request, sid):  ##TODO: meter msg a dizer q foi apagada c sucess
         Shop.objects.get(email=request.user.email).delete()
         return redirect('logout')
     return render(request, 'error.html')
-    
+
 
 def default_content(request):
     brands_list = cache.get('brands_list')
@@ -324,8 +409,7 @@ def product_shops(request, prod_id):
 
 def order_product(request, item_id):
     if request.user.is_authenticated:
-        error_address = False
-        error_qty = False
+        error_address = error_qty = success = False
         item = Item.objects.get(id=item_id)
 
         if request.method == 'POST':
@@ -335,28 +419,42 @@ def order_product(request, item_id):
                 # Ready Info
                 user = User.objects.get(django_user=request.user)
                 qty = order_form.cleaned_data['qty']
-                total_price = order_form.cleaned_data['total_price']
                 payment_meth = order_form.cleaned_data['payment_meth']
 
                 # Verifications & Purchase
-                if user.address:
-                    if item.stock > qty:
-                        order = Order(qty, user, item, total_price, ORDER_STATE[0][0], payment_meth)
-                        item.stock = item.stock - qty
-                        item.save()
-                        order.save()
-                        return render(request, 'old/Account.html', {'orders': user.order_set})
-                    else:
-                        error_qty = True
-                else:
-                    error_address = True
+                success, error_qty, error_address = proccess_order(user, item, qty, payment_meth)
         else:
-            order_form = DoOrderForm(initial={'qty': 1, 'total_price': item.price})
+            order_form = DoOrderForm(initial={'qty': 1})
 
         return render(request, 'DoOrder.html',
-                      {'order_form': order_form, 'error_address': error_address, 'error_qty': error_qty})
+                      {'item': item, 'order_form': order_form,
+                       'error_address': error_address, 'error_qty': error_qty, 'success': success})
     else:
         return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
+
+def proccess_order(user,item, qty, payment_meth):
+    success = error_qty = error_address = False
+    if user.address:
+        if item.stock > qty:
+            total_price = qty * item.price
+
+            order = Order(quantity=qty, user=user, item=item,
+                          total_price=total_price, order_state=ORDER_STATE[0][0], payment_meth=payment_meth)
+            order.save()
+            item.stock = item.stock - qty
+            item.save()
+            success = True
+
+            # Remove from Cart if it was there
+            user_cart = Cart.objects.get(user=user)
+            cart_item = Cart_Item.objects.filter(cart=user_cart, item=item)
+            if cart_item[0].item == item:
+                cart_item[0].delete()
+        else:
+            error_qty = True
+    else:
+        error_address = True
+    return success, error_qty, error_address
 
 
 def add_to_Cart(request, item_id):
@@ -396,12 +494,12 @@ def rem_from_Cart(request, item_id):
         user_cart = Cart.objects.get(user=user)
         item = Item.objects.get(id=item_id)
 
-        cart_item = Cart_Item.objects.get(cart=user_cart, item=item)
-        if cart_item:
-            cart_item.delete()
-    else:
-        # Maybe later, save cart items in cache when not authenticated?
-        return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
+        cart_items = Cart_Item.objects.filter(cart=user_cart, item=item)
+        if len(cart_items) > 0:
+            cart_items[0].delete()
+
+    # Maybe later, save cart items in cache when not authenticated?
+    return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
 
 
 def add_to_Wishlist(request, prod_id):
@@ -441,15 +539,72 @@ def rem_from_Wishlist(request, prod_id):
 
 
 def cart(request):
-    return render(request, 'cart.html')
+    if request.user.is_authenticated:
+        error_address = error_qty = success = False
+        error_qty_item = None
+        user = User.objects.get(django_user=request.user)
+        user_cart = Cart.objects.get(user=user)
+        user_cart_items = Cart_Item.objects.filter(cart=user_cart).order_by('id')
+        payment_meth_form = CartBuyForm()
+
+        if request.method == "POST":
+            print(request.POST)
+            user = User.objects.get(django_user=request.user)
+            payment_meth = request.POST['payment_meth']
+            ids = request.POST.getlist('item_id[]')
+            qtys = request.POST.getlist('qty[]')
+
+            # Buy All Products
+            for x in range(len(ids)):
+                item_id = ids[x]
+                qty = qtys[x]
+                item = Item.objects.get(id=item_id)
+
+                # Verifications & Purchase
+                success, error_qty, error_address = proccess_order(user, item, int(qty), payment_meth)
+                if not success:
+                    error_qty_item = item
+                    return render(request, 'cart.html',
+                                  {'user_cart_items': user_cart_items, 'payment_meth_form': payment_meth_form,
+                                   'error_qty_item': error_qty_item})
+            success = True
+
+        return render(request, 'cart.html',
+                      {'user_cart_items': user_cart_items, 'payment_meth_form': payment_meth_form,
+                       'success': success})
+    else:
+        return HttpResponseRedirect('/login')
 
 
-def checkout(request):
-    return render(request, 'checkout.html')
+
+
 
 
 def wishlist(request):
-    return render(request, 'wishlist.html')
+    if request.user.is_authenticated:
+        user = User.objects.get(django_user=request.user)
+        user_wishlist = WishList.objects.get(user=user)
+        _wishlist = user_wishlist.prods.all()
+        prod_stock = {}
+
+        # Verify if it has stock or not in any of the shops
+        for prod in _wishlist:
+            has_stock = False
+            items = Item.objects.filter(product=prod)
+            qtys = [item.stock for item in items]
+
+            if max(qtys) > 0:
+                has_stock = True
+
+            if prod.name not in prod_stock:
+                prod_stock[prod.name] = has_stock
+
+        return render(request, 'wishlist.html', {'wishlist': _wishlist, 'prod_stock': prod_stock})
+    else:
+        return HttpResponseRedirect('/login')
+
+def checkout(request):
+    return render(request, 'checkout.html')
 
 ## TODO NOTA: USAR ISTO ANTES DE CADA VIEW Q NECESSITA DE LOGIN PARA GARANTIR CONTA É + FACIL
 # @login_required(login_url='/accounts/login/') -> caso tenham duvidas: https://docs.djangoproject.com/en/3.1/topics/auth/default/

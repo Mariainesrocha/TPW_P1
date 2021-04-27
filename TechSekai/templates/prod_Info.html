@@ -29,7 +29,7 @@
             <tr>
               <td>{{ p.shop.name }}</td>
               <td>${{ p.price }}</td>
-              <td><a href="">Buy</a></td>
+              <td><a href="/do_order/{{ p.id }}">Buy</a></td>
               <td><a href="/add_to_cart/{{ p.id }}">Add to Card</a></td>
             </tr>
             {% endfor %}

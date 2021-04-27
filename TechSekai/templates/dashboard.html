@@ -44,16 +44,16 @@
 	                		<aside class="col-md-4 col-lg-3">
 	                			<ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
 								    <li class="nav-item">
-								        <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true">Dashboard</a>
+								        <a class="nav-link {% if show_dashboard %} active {% endif %}" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true">Dashboard</a>
 								    </li>
 								    <li class="nav-item">
-								        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+								        <a class="nav-link {% if show_orders %} active  {% endif %}" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
 								    </li>
 								    <li class="nav-item">
-								        <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Address</a>
+								        <a class="nav-link {% if show_address %} active {% endif %}" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Address</a>
 								    </li>
 								    <li class="nav-item">
-								        <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
+								        <a class="nav-link {% if show_edit_account %} {% endif %}" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
 								    </li>
 								    <li class="nav-item">
 								        <a class="nav-link" href="{% url 'logout' %}">Sign Out</a>
@@ -70,40 +70,44 @@
 								    </div><!-- .End .tab-pane -->
 
 								    <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
-								    	<p>No order has been made yet.</p>
+                                        {% if orders_list.count == 0  %}
+                                            <p>No order has been made yet.</p>
+                                            {% else %}
+                                            <h3>Your Orders: </h3>
+                                            {% for order in orders_list %}
+                                                <div class="card">
+                                                        <p>Product: {{ order.item.product.name }}</p>
+                                                        <p>Quantity: {{ order.quantity }}</p>
+                                                        <p>Price: ${{ order.total_price }}</p>
+                                                        <p>State: {{ order.order_state }}</p>
+                                                </div>
+                                                <hr>
+                                            {% endfor %}
+                                        {% endif %}
 								    	<a href="{% url 'home' %}" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
 								    </div><!-- .End .tab-pane -->
 
 								    <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
-								    	<p>The following addresses will be used on the checkout page by default.</p>
+								    	<p>The following address will be used on the checkout page by default.</p>
 
 								    	<div class="row">
-								    		<div class="col-lg-6">
-								    			<div class="card card-dashboard">
-								    				<div class="card-body">
-								    					<h3 class="card-title">Billing Address</h3><!-- End .card-title -->
-
-														<p>User Name<br>
-														User Company<br>
-														John str<br>
-														New York, NY 10001<br>
-														1-234-987-6543<br>
-														yourmail@mail.com<br>
-														<a href="#">Edit <i class="icon-edit"></i></a></p>
-								    				</div><!-- End .card-body -->
-								    			</div><!-- End .card-dashboard -->
-								    		</div><!-- End .col-lg-6 -->
-
-								    		<div class="col-lg-6">
+								    		<div class="col-lg-9">
 								    			<div class="card card-dashboard">
 								    				<div class="card-body">
 								    					<h3 class="card-title">Shipping Address</h3><!-- End .card-title -->
-
-														<p>You have not set up this type of address yet.<br>
-														<a href="#">Edit <i class="icon-edit"></i></a></p>
+                                                        <form id="edit_user_form" method="post" action="/account/">
+                                                            {% csrf_token %}
+                                                            {{ address_form.as_p}}
+                                                        <input type="submit" name="address_create" value="Save" />
+                                                        </form>
+                                                        {% if updated_address_form %}
+                                                            <strong>Saved Successfully!</strong>
+                                                        {% endif %}
 								    				</div><!-- End .card-body -->
 								    			</div><!-- End .card-dashboard -->
 								    		</div><!-- End .col-lg-6 -->
+
+
 								    	</div><!-- End .row -->
 								    </div><!-- .End .tab-pane -->
 
@@ -111,9 +115,9 @@
 								    	<form id="edit_user_form" method="post" action="/account/">
                                             {% csrf_token %}
                                             {{ extra_user_form.as_p }}
-                                            <input type="submit" name="submit" value="Save" />
+                                            <input type="submit" name="account_edit" value="Save" />
                                         </form>
-                                        {% if updated %}
+                                        {% if updated_user_form %}
                                             <strong>Updated Successfully!</strong>
                                         {% endif %}
 								    </div><!-- .End .tab-pane -->
