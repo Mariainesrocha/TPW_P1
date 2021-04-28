@@ -1,7 +1,9 @@
 {% extends "mainLayout.html" %}
+{% load static %}
 {% load auth_extras %}
+
 {% block main %}
-    <div class="container" style="padding-top: 5%; padding-bottom: 3%">
+    <div class="container" style="padding-top: 5%">
         <div class="cat-blocks-container" style="text-align: center">
         {% for p in products %}
             {% if request.user|has_group:"shops" %}
@@ -32,6 +34,30 @@
                 <p class="btn btn-danger disabled btn-lg" style="color: white; margin-bottom: 10px; border-radius: 10px;"> Sorry, no products available! </p>
                 <br>
         {% endfor %}
+        <div class="container" style="display: flex;justify-content: center;padding-top: 3%; padding-bottom: 3%">
+            {% if products.has_other_pages %}
+              <ul class="pagination" style="text-align: center">
+                {% if products.has_previous %}
+                  <li class="page-item"><a class="page-link" href="?page={{ products.previous_page_number }}">Previous</a></li>
+                {% else %}
+                  <li class="disabled"><span></span></li>
+                {% endif %}
+                {% for i in products.paginator.page_range %}
+                  {% if products.number == i %}
+                    <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                  {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                {% if products.has_next %}
+                  <li class="page-item"><a class="page-link" href="?page={{ products.next_page_number }}">Next</a></li>
+                {% else %}
+                  <li class="disabled"><span></span></li>
+                {% endif %}
+              </ul>
+            {% endif %}
+        </div>
+
         </div><!-- End .cat-blocks-container -->
     </div><!-- End .container -->
 {% endblock %}

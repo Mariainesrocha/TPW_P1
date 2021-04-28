@@ -125,7 +125,7 @@ c1 = Category.objects.get(name="Phones")
 b1 = Brand.objects.get(name="Apple")
 obj1.category = c1
 obj1.brand = b1
-
+obj1.save()
 
 obj2 = Product(reference_number=11111, name='iPhone 5',details='Color: Silver,RAM: 3GB, SO: iOS, Storage:32GB, Battery: 1500 mAh, Screen-size:3.8', warehouse='US Apple warehouse',qty_sold=0)
 

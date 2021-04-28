@@ -50,17 +50,17 @@
                             </li>
                         </ul>
                     {% if msg %}
-                        <div class="alert alert-success" role="alert">
+                        <p class="btn btn-success disabled btn-lg" style="color: white;margin-top: 10%; margin-bottom: 10%; border-radius: 10px;">
                             <strong>Success: </strong> {{ msg }}
-                        </div>
+                        </p>
                         <br>
                         <div style="text-align: center">
                             <a class="btn btn-primary rounded btn-sm" href="/login/" role="button">Login</a>
                         </div>
                     {% elif msgErr %}
-                        <div class="alert alert-danger" role="alert">
+                        <p class="btn btn-danger disabled btn-lg" style="color: white;margin-top: 10%; margin-bottom: 10%; border-radius: 10px;">
                             <strong>Error: </strong> {{ msgErr }}
-                        </div>
+                        </p>
                         <br>
                         <div style="text-align: center">
                             <a class="btn btn-primary rounded btn-sm" href="/shops/add/" role="button">Register Again</a>

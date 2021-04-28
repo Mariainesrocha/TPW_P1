@@ -27,38 +27,6 @@
                 </div><!-- End .row -->
             </div><!-- End .container intro-content -->
         </div><!-- End .intro-slide -->
-
-        <div class="intro-slide" style="background-image: url({% static 'imgs/13/slider/slide-2.jpg' %});">
-            <div class="container intro-content">
-                <div class="row">
-                    <div class="col-auto offset-lg-3 intro-col">
-                        <h3 class="intro-subtitle">Trevel & Outdoor</h3><!-- End .h3 intro-subtitle -->
-                        <h1 class="intro-title">Original Outdoor <br>Beanbag
-                            <span>
-                                    <sup class="font-weight-light line-through">$89,99</sup>
-                                    <span class="text-primary">$29<sup>,99</sup></span>
-                                </span>
-                        </h1><!-- End .intro-title -->
-                    </div><!-- End .col-auto offset-lg-3 -->
-                </div><!-- End .row -->
-            </div><!-- End .container intro-content -->
-        </div><!-- End .intro-slide -->
-
-        <div class="intro-slide" style="background-image: url({% static 'imgs/13/slider/slide-3.jpg' %});">
-            <div class="container intro-content">
-                <div class="row">
-                    <div class="col-auto offset-lg-3 intro-col">
-                        <h3 class="intro-subtitle">Fashion Promotions</h3><!-- End .h3 intro-subtitle -->
-                        <h1 class="intro-title">Tan Suede <br>Biker Jacket
-                            <span>
-                                    <sup class="font-weight-light line-through">$240,00</sup>
-                                    <span class="text-primary">$180<sup>,99</sup></span>
-                                </span>
-                        </h1><!-- End .intro-title -->
-                    </div><!-- End .col-auto offset-lg-3 -->
-                </div><!-- End .row -->
-            </div><!-- End .container intro-content -->
-        </div><!-- End .intro-slide -->
     </div><!-- End .owl-carousel owl-simple -->
 
     <span class="slider-loader"></span><!-- End .slider-loader -->
@@ -163,40 +131,12 @@
                 }
             }'>
         {%  for shop in shops %}
-            <a href="search/shop/{{ shop.name }}/" class="brand">
+            <a href="search/shop/{{ shop.name }}/" style="text-align: center">
                 <img src="/media/{{ shop.image }}" alt="{{ shop.name }}">
+                <p style="color: black"> {{ shop.name }}</p>
             </a>
         {% endfor %}
     </div><!-- End .owl-carousel -->
 </div><!-- End .container -->
 {% endif %}
-
-{% block list_products_block %}
-
-{% endblock %}
-
-<div class="cta cta-horizontal cta-horizontal-box bg-primary">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-2xl-5col">
-                <h3 class="cta-title text-white">Join Our Newsletter</h3><!-- End .cta-title -->
-                <p class="cta-desc text-white">Subcribe to get information about products and coupons</p>
-                <!-- End .cta-desc -->
-            </div><!-- End .col-lg-5 -->
-
-            <div class="col-3xl-5col">
-                <form action="#">
-                    <div class="input-group">
-                        <input type="email" class="form-control form-control-white"
-                               placeholder="Enter your Email Address" aria-label="Email Adress" required>
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-white-2" type="submit"><span>Subscribe</span><i
-                                    class="icon-long-arrow-right"></i></button>
-                        </div><!-- .End .input-group-append -->
-                    </div><!-- .End .input-group -->
-                </form>
-            </div><!-- End .col-lg-7 -->
-        </div><!-- End .row -->
-    </div><!-- End .container -->
-</div><!-- End .cta -->
 {% endblock %}

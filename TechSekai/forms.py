@@ -55,8 +55,8 @@ class EditAddressForm(ModelForm):
             'city': forms.TextInput(attrs={'class': 'form-control'}),
             'street': forms.TextInput(attrs={'class': 'form-control'}),
             'zip_code': forms.TextInput(attrs={'class': 'form-control'}),
-            'floor': forms.TextInput(attrs={'class': 'form-control'}),
-            'door': forms.TextInput(attrs={'class': 'form-control'}),
+            'floor': forms.NumberInput(attrs={'class': 'form-control'}),
+            'door': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
 
@@ -76,7 +76,8 @@ class EditItem(ModelForm):
 
 class AddShopForm(forms.Form):
     name = forms.CharField(label='Shop Name', max_length=40, widget=forms.TextInput(attrs={'class':'form-control'}))
-    phone_number = forms.IntegerField(label='Shop Phone Number', widget=forms.NumberInput(attrs={'class':'form-control'}))
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',  message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    phone_number = forms.IntegerField(validators=[phone_regex], label='Shop Phone Number', widget=forms.TextInput(attrs={'class':'form-control'}))
 
 
 class EditShopForm(ModelForm):
@@ -86,6 +87,8 @@ class EditShopForm(ModelForm):
         fields = '__all__'
         widgets = {
             'opening_hours': forms.TimeInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'website': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 
@@ -120,7 +123,7 @@ class EditProductForm(ModelForm):
 
     class Meta:
         model = Product
-        exclude = ['reference_number', 'qty_sold', 'lowest_price']
+        exclude = ['reference_number', 'qty_sold', 'lowest_price', 'creator']
         fields = '__all__'
 
 

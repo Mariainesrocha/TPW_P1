@@ -92,7 +92,8 @@ class Product(models.Model):
     image = models.ImageField(null=True, default='logo.png', upload_to='images/', blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
-    lowest_price = models.IntegerField(null=False, default=100000000000000000000)
+    lowest_price = models.IntegerField(null=False, default=100)
+    creator = models.ForeignKey(Shop, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return " [ " + str(self.reference_number) + " ] " + self.name + ", " + self.brand.name

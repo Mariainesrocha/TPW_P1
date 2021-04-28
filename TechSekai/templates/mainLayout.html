@@ -198,9 +198,62 @@
         {% block main %}
         {% endblock %}
     {% if viewed %}
-        {% for p in viewed %}
-            <h4 style="color: black"> {{ p.name }} </h4>
-        {% endfor %}
+<div class="bg-light pt-3 pb-5">
+    <div class="container">
+        <h2 class="title title-border mb-5" style="color: #78b0f3">Recent Viewed Products</h2><!-- End .title -->
+        <div class="tab-content tab-content-carousel" style="background: #efebeb" >
+            <div class="tab-pane p-0 fade show active" id="hot-all-tab" role="tabpanel" aria-labelledby="hot-all-link">
+                <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow"
+                     data-toggle="owl"
+                     data-owl-options='{
+                            "nav": false,
+                            "dots": true,
+                            "margin": 20,
+                            "loop": false,
+                            "responsive": {
+                                "0": {
+                                    "items":2
+                                },
+                                "480": {
+                                    "items":2
+                                },
+                                "768": {
+                                    "items":3
+                                },
+                                "992": {
+                                    "items":4
+                                },
+                                "1280": {
+                                    "items":5,
+                                    "nav": true
+                                }
+                            }
+                        }' style="padding-left: 20px;">
+                     {% for p in viewed %}
+                        <div class="product">
+                        <figure class="product-media">
+                            <a href="/product/{{ p.id }}/">
+                                <img src="/media/{{ p.image }}" alt="Product image" class="product-image">
+                            </a>
+                        </figure><!-- End .product-media -->
+
+                        <div class="product-body">
+                            <div class="product-cat">
+                                <a href="#">{{ p.category.name }}</a>
+                            </div><!-- End .product-cat -->
+                            <h3 class="product-title"><a href="/product/{{ p.id }}/">{{ p.name }}</a></h3>
+                            <!-- End .product-title -->
+                            <div class="product-price">
+                                <span class="new-price">Lowest Price: {{ p.lowest_price }}</span>
+                            </div><!-- End .product-price -->
+                        </div><!-- End .product-body -->
+                    </div><!-- End .product -->
+                    {% endfor %}
+                </div><!-- End .owl-carousel -->
+            </div><!-- .End .tab-pane -->
+        </div><!-- End .tab-content -->
+    </div><!-- End .container -->
+</div><!-- End .bg-light pt-5 pb-5 -->
     {% endif %}
     </main><!-- End .main -->
     <footer class="footer footer-2" style="background: #39f; color:white">

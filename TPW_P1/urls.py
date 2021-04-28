@@ -1,6 +1,6 @@
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from TPW_P1 import settings
 from TechSekai import views
 from django.contrib.auth import views as auth_views
@@ -20,6 +20,8 @@ urlpatterns = [
     #path('register', views.register, name='register'),
     #path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('login/', views.login_view, name='login'),
+    path('accounts/', include('allauth.urls')),
+    path('accounts/signup/', views.account_signup_view),
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
     path('account/', views.account_page, name='account'),
 
