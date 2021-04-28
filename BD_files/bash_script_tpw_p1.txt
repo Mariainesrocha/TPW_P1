@@ -42,21 +42,21 @@ a15.save()
 ########################################################################################################################################
 
 #----------------------------------- Category
-obj1 = Category(name='TVs',totDevices=0)
-obj2 = Category(name='Phones',totDevices=0)
-obj3 = Category(name='Drones',totDevices=0)
-obj4 = Category(name='Accessories',totDevices=0)
-obj5 = Category(name='Sound Devices',totDevices=0)
-obj6 = Category(name='Smartwatches',totDevices=0)
-obj7 = Category(name='Laptops',totDevices=0)
-obj8 = Category(name='Storage Devices',totDevices=0)
-obj9 = Category(name='Components adn Peripherals',totDevices=0)
-obj10 = Category(name='Tablets',totDevices=0) 
-obj11 = Category(name='Cameras',totDevices=0)
-obj12 = Category(name='Printers',totDevices=0)
-obj13 = Category(name='Videogames',totDevices=0)
-obj14 = Category(name='VR/AR Devices',totDevices=0)
-obj15 = Category(name='Smart Home Devices',totDevices=0)
+obj1 = Category(name='TVs',totDevices=0,image='../media/images/logo.png')
+obj2 = Category(name='Phones',totDevices=0,image='../media/images/logo.png')
+obj3 = Category(name='Drones',totDevices=0,image='../media/images/logo.png')
+obj4 = Category(name='Accessories',totDevices=0,image='../media/images/logo.png')
+obj5 = Category(name='Sound Devices',totDevices=0,image='../media/images/logo.png')
+obj6 = Category(name='Smartwatches',totDevices=0,image='../media/images/logo.png')
+obj7 = Category(name='Laptops',totDevices=0,image='../media/images/logo.png')
+obj8 = Category(name='Storage Devices',totDevices=0,image='../media/images/logo.png')
+obj9 = Category(name='Components adn Peripherals',totDevices=0,image='../media/images/logo.png')
+obj10 = Category(name='Tablets',totDevices=0,image='../media/images/logo.png')
+obj11 = Category(name='Cameras',totDevices=0,image='../media/images/logo.png')
+obj12 = Category(name='Printers',totDevices=0,image='../media/images/logo.png')
+obj13 = Category(name='Videogames',totDevices=0,image='../media/images/logo.png')
+obj14 = Category(name='VR/AR Devices',totDevices=0,image='../media/images/logo.png')
+obj15 = Category(name='Smart Home Devices',totDevices=0,image='../media/images/logo.png')
 
 
 obj1.save()
@@ -116,10 +116,10 @@ obj16.save()
 obj17.save()
 obj18.save()
 ########################################################################################################################################
-
-
+s1 = Shop.objects.get(name="Tech4U")
+s2 = Shop.objects.get(name="Future2Day")
 #------------------------------------ PRODS
-obj1 = Product(reference_number=123455, name='iPhone X',details='Color: White,RAM: 3GB, SO: iOS, Storage:64GB, Battery: 2176 mAh, Screen-size:5.8', warehouse='US Apple warehouse',qty_sold=0)
+obj1 = Product(reference_number=123455, name='iPhone X',details='Color: White,RAM: 3GB, SO: iOS, Storage:64GB, Battery: 2176 mAh, Screen-size:5.8', warehouse='US Apple warehouse',qty_sold=0, lowest_price=1000, creator=s1, image='../media/images/logo.png')
 
 c1 = Category.objects.get(name="Phones")
 b1 = Brand.objects.get(name="Apple")
@@ -127,7 +127,7 @@ obj1.category = c1
 obj1.brand = b1
 obj1.save()
 
-obj2 = Product(reference_number=11111, name='iPhone 5',details='Color: Silver,RAM: 3GB, SO: iOS, Storage:32GB, Battery: 1500 mAh, Screen-size:3.8', warehouse='US Apple warehouse',qty_sold=0)
+obj2 = Product(reference_number=11111, name='iPhone 5',details='Color: Silver,RAM: 3GB, SO: iOS, Storage:32GB, Battery: 1500 mAh, Screen-size:3.8', warehouse='US Apple warehouse',qty_sold=0, lowest_price=800, creator=s1, image='../media/images/logo.png')
 
 c1 = Category.objects.get(name="Phones")
 b1 = Brand.objects.get(name="Apple")
@@ -135,14 +135,14 @@ obj2.category = c1
 obj2.brand = b1
 
 
-obj3 = Product(reference_number=1222222, name='Smart TV 4K', details='Color: Black, SO: webOS, Diagonal Screen-size:165 cm', warehouse='LG Eletronics Portugal S.A.',qty_sold=0)
+obj3 = Product(reference_number=1222222, name='Smart TV 4K', details='Color: Black, SO: webOS, Diagonal Screen-size:165 cm', warehouse='LG Eletronics Portugal S.A.',qty_sold=0, lowest_price=658, creator=s2, image='../media/images/logo.png')
 
 c3 = Category.objects.get(name="TVs")
 b3 = Brand.objects.get(name="LG")
 obj3.category = c3
 obj3.brand = b3
 
-obj4 = Product(reference_number=13333, name='Smart TV', details='Color: Silver, SO: Tizen, Diagonal Screen-size:191 cm', warehouse='Samsung Electronics Japan',qty_sold=0)
+obj4 = Product(reference_number=13333, name='Smart TV', details='Color: Silver, SO: Tizen, Diagonal Screen-size:191 cm', warehouse='Samsung Electronics Japan',qty_sold=0, lowest_price=738, creator=s2, image='../media/images/logo.png')
 
 c4 = Category.objects.get(name="TVs")
 b4 = Brand.objects.get(name="Samsung")
@@ -183,15 +183,22 @@ obj2.save()
 ########################################################################################################################################
 from django.contrib.auth.models import User as DjangoU
 
-dju = DjangoU.objects.create_user(username='anasimoes@gmail.com',first_name='Ana Simoes', password='secret')
+dju = DjangoU.objects.create_user(username='Tech4U', password='secret', email='tech4u@gmail.com')
+dju2 = DjangoU.objects.create_user(username='Future2Day', password='secret', email='future2day@gmail.com')
 
 #----------------------------------- SHOP
-dju = DjangoU.objects.get(username='anasimoes@gmail.com')
-obj1 = Shop(owner=dju,name='Tech4U', phone_number=987234568, certified=0)
+dju = DjangoU.objects.get(username='Tech4U')
+obj1 = Shop(owner=dju,name='Tech4U', phone_number=987234568, image='../media/images/logo.png')
 a1  = Address.objects.get(city='Málaga')
 obj1.address = a1
 
 obj1.save()
+
+obj2 = Shop(owner=dju2,name='Future2Day', phone_number=987234569, image='../media/images/logo.png')
+a2  = Address.objects.get(city='Aveiro')
+obj2.address = a2
+
+obj2.save()
 
 ########################################################################################################################################
 

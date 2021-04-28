@@ -671,9 +671,7 @@ def rem_from_Cart(request, item_id):
         cart_items = Cart_Item.objects.filter(cart=user_cart, item=item)
         if len(cart_items) > 0:
             cart_items[0].delete()
-    else:
-        # Maybe later, save cart items in cache when not authenticated?
-        return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
+    return redirect(request.META['HTTP_REFERER'])  # Redirect to previous url
 
 
 def add_to_Wishlist(request, prod_id):
