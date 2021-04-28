@@ -23,4 +23,9 @@ def category_context_processor(request):
             wishList = len(w.prods.all())
             content.update({'wishList': wishList})
 
+        viewed = []
+        if 'viewed' in request.session:
+            for i in request.session['viewed']:
+                viewed.append(Product.objects.get(id=i))
+            content.update({'viewed': viewed})
     return content

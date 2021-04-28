@@ -197,6 +197,11 @@
     <main class="main">
         {% block main %}
         {% endblock %}
+    {% if viewed %}
+        {% for p in viewed %}
+            <h4 style="color: black"> {{ p.name }} </h4>
+        {% endfor %}
+    {% endif %}
     </main><!-- End .main -->
     <footer class="footer footer-2" style="background: #39f; color:white">
         <div class="icon-boxes-container">

@@ -519,6 +519,14 @@ def product_shops(request, prod_id):
         if product in user_wishlist.prods.all():
             product_in_wishlist = True
 
+        if 'viewed' in request.session:
+            if product.id not in request.session['viewed']:
+                request.session['viewed'] += [product.id]
+        else:
+            request.session['viewed'] = [product.id]
+
+    #del request.session['viewed']
+
     return render(request, 'prod_Info.html',
                   {'prod': product, 'wishlist': product_in_wishlist, 'prod_per_shop': item_per_shop})
 
