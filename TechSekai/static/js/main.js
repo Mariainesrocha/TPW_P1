@@ -41,11 +41,11 @@ $(document).ready(function () {
 			offset: -300,
             handler: function ( direction ) {
                 // Show category dropdown
-                if ( catInitVal &&  direction == 'up') {
+                /*if ( catInitVal &&  direction == 'up') {
                     catDropdown.addClass('show').find('.dropdown-menu').addClass('show');
                     catDropdown.find('.dropdown-toggle').attr('aria-expanded', 'true');
                     return false;
-                }
+                }*/
 
                 // Hide category dropdown on fixed header
                 if ( catDropdown.hasClass('show') ) {

@@ -19,3 +19,7 @@ def define(val=None):
 def addstr(arg1=None, arg2=None):
     """concatenate arg1 & arg2"""
     return str(arg1) + str(arg2)
+
+@register.filter(name='split')
+def split(value, key):
+    return value.split(key)

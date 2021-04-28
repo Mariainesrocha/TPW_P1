@@ -1,0 +1,181 @@
+{% extends 'mainLayout.html' %}
+{% load static %}
+{% load auth_extras %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>TechSekai</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'imgs/icon_logo.png' %}">
+    <meta name="msapplication-TileColor" content="#cc9966">
+    <meta name="msapplication-config" content="assets/images/icons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="{% static 'vendor/line-awesome/line-awesome/line-awesome/css/line-awesome.min.css' %}">
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/plugins/owl-carousel/owl.carousel.css' %}">
+    <link rel="stylesheet" href="{% static 'css/plugins/magnific-popup/magnific-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'css/plugins/jquery.countdown.css' %}">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="{% static 'css/style2.css' %}">
+    <link rel="stylesheet" href="{% static 'css/skins/skin-demo-13.css' %}">
+    <link rel="stylesheet" href="{% static 'css/demos/demo-13.css' %}">
+</head>
+
+<body>
+    {% block main %}
+    <div class="page-wrapper">
+        <main class="main">
+            <div style="margin-top: 30px "></div>
+
+            <div class="page-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <div class="product-details-top">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="product-gallery">
+                                            <figure class="product-main-image">
+                                                <img id="product-zoom" style="height: 200px;width: 100%;" class="img-fluid"  src="/media/{{ prod.image }}" alt="product image">
+                                            </figure><!-- End .product-main-image -->
+                                        </div><!-- End .product-gallery -->
+                                    </div><!-- End .col-md-6 -->
+
+                                    <div class="col-md-6">
+                                        <div class="product-details product-details-sidebar">
+                                            <h1 class="product-title">{{ prod.name }}</h1><!-- End .product-title -->
+
+                                            <div class="product-details-action">
+                                                <div class="details-action-wrapper">
+                                                    {% if not wishlist %}
+                                                        <a href="/add_to_wishlist/{{ prod.id }}" class="btn-product btn-wishlist" title="Wishlist">Add to WishList</a>
+                                                        {% else %}
+                                                        <a href="/rem_from_wishlist/{{ prod.id }}" class="btn-product btn-wishlist" title="Wishlist">Remove from WishList</a>
+                                                    {% endif %}
+                                                </div><!-- End .details-action-wrapper -->
+                                            </div><!-- End .product-details-action -->
+
+                                            <div class="product-details-footer details-footer-col">
+                                                <div class="product-cat">
+                                                    <span>Category:</span>
+                                                    <a href="#">{{ prod.category }}</a>,
+                                                </div><!-- End .product-cat -->
+
+                                                <div class="social-icons social-icons-sm">
+                                                    <span class="social-label">Share:</span>
+                                                    <a href="#" class="social-icon" title="Facebook" target="_blank"><i class="icon-facebook-f"></i></a>
+                                                    <a href="#" class="social-icon" title="Twitter" target="_blank"><i class="icon-twitter"></i></a>
+                                                    <a href="#" class="social-icon" title="Instagram" target="_blank"><i class="icon-instagram"></i></a>
+                                                    <a href="#" class="social-icon" title="Pinterest" target="_blank"><i class="icon-pinterest"></i></a>
+                                                </div>
+                                            </div><!-- End .product-details-footer -->
+                                        </div><!-- End .product-details -->
+                                    </div><!-- End .col-md-6 -->
+                                </div><!-- End .row -->
+                            </div><!-- End .product-details-top -->
+
+                            <div class="product-details-tab">
+                                <ul class="nav nav-pills justify-content-center" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="product-desc-link" data-toggle="tab" href="#product-desc-tab" role="tab" aria-controls="product-desc-tab" aria-selected="true">Information</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="product-shipping-link" data-toggle="tab" href="#product-shipping-tab" role="tab" aria-controls="product-shipping-tab" aria-selected="false">Shipping & Returns</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="product-desc-tab" role="tabpanel" aria-labelledby="product-desc-link">
+                                        <div class="product-desc-content">
+                                            <h3>Product Information</h3>
+                                            <ul>
+                                                <li>Brand: {{ prod.brand }}</li>
+                                                <li>Model: {{ prod.name }}</li>
+                                                {% with prod.details|split:"," as details  %}
+                                                    {% for detail in details %}
+                                                        <li>{{ detail }}</li>
+                                                    {% endfor %}
+                                                {% endwith %}
+                                            </ul>
+
+                                        </div><!-- End .product-desc-content -->
+                                    </div><!-- .End .tab-pane -->
+                                    <div class="tab-pane fade" id="product-shipping-tab" role="tabpanel" aria-labelledby="product-shipping-link">
+                                        <div class="product-desc-content">
+                                            <h3>Delivery & returns</h3>
+                                            <p>We deliver to over 100 countries around the world. For full details of the delivery options we offer, please view our <a href="#">Delivery information</a><br>
+                                            We hope you’ll love every purchase, but if you ever need to return an item you can do so within a month of receipt. For full details of how to make a return, please view our <a href="#">Returns information</a></p>
+                                        </div><!-- End .product-desc-content -->
+                                    </div><!-- .End .tab-pane -->
+                                </div><!-- End .tab-content -->
+                            </div><!-- End .product-details-tab -->
+                        </div><!-- End .col-lg-9 -->
+
+                        <aside class="col-lg-3">
+                            <div class="sidebar sidebar-product">
+                                <div class="widget widget-products">
+                                    <h4 class="widget-title">Shops</h4><!-- End .widget-title -->
+
+                                    <div class="products">
+                                        {% for p in prod_per_shop %}
+                                            <div class="product product-sm">
+                                                <div class="product-body">
+                                                    <table class="table">
+                                                        <tr>
+                                                            <td>
+                                                                <h5 style="font-size: 20px" class="product-title"><a href="">{{ p.shop.name}}</a></h5><!-- End .product-title -->
+                                                                <div class="product-price">
+                                                                    <span style="font-size: 20px" class="new-price">${{ p.price }}</span>
+                                                                </div><!-- End .product-price -->
+                                                            </td>
+                                                            <td>
+                                                                <a href="/add_to_cart/{{ p.id }}" class="rocket btn_rocketPulse btn-product btn-cart"><span>add to cart</span></a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+
+                                                </div><!-- End .product-body -->
+                                            </div><!-- End .product product-sm -->
+                                        {% endfor %}
+                                    </div><!-- End .products -->
+                                </div><!-- End .widget widget-products -->
+                            </div><!-- End .sidebar sidebar-product -->
+                        </aside><!-- End .col-lg-3 -->
+                    </div><!-- End .row -->
+
+                </div><!-- End .container -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+    </div>
+    {% endblock %}
+
+    <!-- Plugins JS File -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/jquery.hoverIntent.min.js' %}"></script>
+<script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'js/superfish.min.js' %}"></script>
+<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-input-spinner.js' %}"></script>
+<script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+<script src="{% static 'js/jquery.plugin.min.js' %}"></script>
+<script src="{% static 'js/jquery.countdown.min.js' %}"></script>
+<script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js"></script>
+
+<!-- Main JS File -->
+<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/demos/demo-13.js' %}"></script>
+
+
+
+
+</body>
+
+
+<!-- molla/product-sidebar.html  22 Nov 2019 10:03:37 GMT -->
+</html>

@@ -38,9 +38,10 @@
 
             <div style="margin-top: 30px "></div>
                  {% if success %}
-                <div class="container">
-                    <h3 style="color:green"> Your Orders were Submitted Succefully!</h3>
-                    <a href="/account/"><u> You can check the orders status in your account's 'ORDERS' Tab</u></a>
+                <div class="container" style="text-align: center">
+                    <p class="btn btn-success disabled btn-lg" style="color: white; margin-bottom: 10px; border-radius: 10px;">Your Order(s) were Submitted Succefully!</p>
+                        <br/>
+                    <p class="btn btn-info disabled btn-lg" style="margin-bottom: 10px; border-radius: 10px"><a style="text-decoration: underline; color: white" href="/account/">You can check the orders status in your account's 'ORDERS' Tab</a></p>
                 </div>
                 {% else %}
              <form id="finish_purchase" method="post" action="/account/shoppingcart/">
@@ -50,7 +51,7 @@
 	                	<div class="row">
 	                		<div class="col-lg-9">
                                 {% if user_cart_items.count == 0 %}
-                                <h3 style="align-content: center">Your Cart is currently empty!</h3>
+                                    <p class="btn btn-danger disabled btn-lg" style="color: white; margin-bottom: 10px; border-radius: 10px;"> Your cart is currently empty! </p>
                                 {% else %}
 
                                     {% csrf_token %}
@@ -99,7 +100,7 @@
 	                		<aside class="col-lg-3">
 	                			<div class="summary summary-cart">
 	                				<h3 class="summary-title">Cart Total</h3><!-- End .summary-title -->
-	                				<table class="table table-summary">
+	                				<table class="table table-summary" >
 	                					<tbody>
 	                						<tr class="summary-total">
 	                							<td>Total:</td>
@@ -108,11 +109,16 @@
 	                					</tbody>
 	                				</table><!-- End .table table-summary -->
                                         {{ payment_meth_form }}
-                                        {% if error_qty_item %}
-                                            <p style="color:red">Unfortunately  {{ error_qty_item.product.name }} does not have enough stock :(  </p>
-                                            <p style="color:green">However, Products Processed before {{ error_qty_item.product.name }} have been bought Successfuly!
-                                                Check it out in the <a href="/account/"><u>Orders Tab</u></a> </p>
+                                        {% if error_address %}
+                                            <p class="btn btn-danger disabled btn-lg" style="color: white; margin-bottom: 10px; border-radius: 10px;"> You need to Add an Address in your account settings first! </p>
                                         {% endif %}
+                                        {% if error_qty %}
+                                            <p class="btn btn-danger disabled btn-lg" style="color: white; margin-bottom: 10px; border-radius: 10px;"> Unfortunately  {{ error_qty_item.product.name }} does not have enough stock :( </p>
+                                            <p class="btn btn-success disabled btn-lg" style="color: white; margin-bottom: 10px; border-radius: 10px;"> However, Products Processed before {{ error_qty_item.product.name }} have been bought Successfuly!</p>
+                                            <div  style="text-align: center">
+                                                <p class="btn btn-info disabled btn-lg" style="margin-bottom: 10px; border-radius: 10px"><a style="text-decoration: underline; color: white" href="/account/">Go to the Orders Tab</a></p>
+                                            </div>
+                                           {% endif %}
                                         <input class="btn btn-outline-primary-2 btn-order btn-block" type="submit" name="buy_prods" value="CONFIRM PURCHASE" />
                                 {% endif %}
 	                			</div><!-- End .summary -->

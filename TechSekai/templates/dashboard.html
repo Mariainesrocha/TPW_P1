@@ -74,15 +74,36 @@
                                             <p>No order has been made yet.</p>
                                             {% else %}
                                             <h3>Your Orders: </h3>
-                                            {% for order in orders_list %}
-                                                <div class="card">
-                                                        <p>Product: {{ order.item.product.name }}</p>
-                                                        <p>Quantity: {{ order.quantity }}</p>
-                                                        <p>Price: ${{ order.total_price }}</p>
-                                                        <p>State: {{ order.order_state }}</p>
-                                                </div>
-                                                <hr>
-                                            {% endfor %}
+                                            <table class="table table-wishlist table-mobile">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Product</th>
+                                                        <th>Quantity</th>
+                                                        <th>Price</th>
+                                                        <th>State</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+
+                                                     {% for order in orders_list %}
+                                                    <tr>
+                                                        <td class="product-col">
+                                                            <div class="product">
+                                                                <h3 class="product-title">
+                                                                    <a href="#"> {{ order.item.product.name }}</a>
+                                                                </h3><!-- End .product-title -->
+                                                            </div><!-- End .product -->
+                                                        </td>
+                                                        <td class="price-col">{{ order.quantity }}</td>
+                                                        <td class="price-col">${{ order.total_price }}</td>
+                                                        <td class="price-col">{{ order.order_state }}</td>
+
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
                                         {% endif %}
 								    	<a href="{% url 'home' %}" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
 								    </div><!-- .End .tab-pane -->

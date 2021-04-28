@@ -527,7 +527,7 @@ def product_shops(request, prod_id):
 
     #del request.session['viewed']
 
-    return render(request, 'prod_Info.html',
+    return render(request, 'product-sidebar.html',
                   {'prod': product, 'wishlist': product_in_wishlist, 'prod_per_shop': item_per_shop})
 
 
@@ -688,7 +688,7 @@ def cart(request):
                     error_qty_item = item
                     return render(request, 'cart.html',
                                   {'user_cart_items': user_cart_items, 'payment_meth_form': payment_meth_form,
-                                   'error_qty_item': error_qty_item})
+                                   'error_qty_item': error_qty_item, 'error_address': error_address, 'error_qty': error_qty})
             success = True
 
         return render(request, 'cart.html',
@@ -711,8 +711,10 @@ def wishlist(request):
             items = Item.objects.filter(product=prod)
             qtys = [item.stock for item in items]
 
-            if max(qtys) > 0:
+            if qtys and max(qtys)>0:
                 has_stock = True
+            else:
+                has_stock = False
 
             if prod.name not in prod_stock:
                 prod_stock[prod.name] = has_stock
