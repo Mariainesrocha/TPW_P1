@@ -25,7 +25,7 @@ SECRET_KEY = '1o@&0ix#(zp0hs#%-eury$1c#r6hl_7##e-y13jst(2g0fnzt5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['MariaRocha.pythonanywhere.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -122,12 +122,14 @@ USE_L10N = True
 USE_TZ = True
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+#SESSION_COOKIE_AGE = 10 * 60
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_ROOT = '/home/MariaRocha/TPW_P1/media'
+
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 AUTHENTICATION_BACKENDS = [
