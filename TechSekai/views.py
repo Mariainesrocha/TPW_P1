@@ -280,7 +280,7 @@ def add_product(request):
                     c.totDevices += 1
                     c.save()
 
-                    i = Item(price=price, shop=loggedShop, product=p)
+                    i = Item(price=price, shop=loggedShop, product=p, stock=1)
                     i.save()
                 except:
                     return render(request, 'productForm.html', {'msgErr': ' Product not inserted, try again later!', 'page': 'Add', 'obj': 'Product'})

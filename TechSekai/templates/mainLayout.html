@@ -55,7 +55,7 @@
                                         <option value="all">All Categories</option>
                                         {% if all_categories %}
                                             {% for c in all_categories %}
-                                                <option value="{{ c.name }}">{{ c.name }}</option>
+                                                <option value="{{ c.name }}">{{ c.name }} </option>
                                             {% endfor %}
                                         {% endif %}
                                     </select>
@@ -140,7 +140,7 @@
                                     {% if all_categories %}
                                         {% for c in all_categories %}
                                             <li>
-                                                <a class="sf-with-ul" href="/search/category/{{ c.name }}/"> {{ c.name }}</a>
+                                                <a class="sf-with-ul" href="/search/category/{{ c.name }}/"> {{ c.name }}  ({{ c.totDevices }})</a>
                                             </li>
                                         {% endfor %}
                                     {% endif %}
