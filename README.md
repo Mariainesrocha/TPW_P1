@@ -10,8 +10,9 @@ Theme : Shopping Store
       > Pedro Souto
 
 ### Main features - General:
-      > Search by a product's Category or Name (Results are presented using pagination in case there are more than 12)
+      > Search by a product's Category or Name (Results are presented using pagination(*) in case there are more than 12)
       > Tabs for: Hot Deals(Most sold products) / Newly Arrived(Most recent products) / Shops(List of Shops)  
+      > (*) Pagination can be tested by selecting on the 'Browse Categories' menu the option 'Phones (14)'
 
 ### Main Features - Authenticated Customer:
       > External Authentication by Google
@@ -48,7 +49,9 @@ Theme : Shopping Store
 
 ### Site online:
       http://mariarocha.pythonanywhere.com/
-
+      
+      Note: Google Authentication is not working on pythonanywhere site because Google has some security measures that don't allow redirect the login to an insecure domain.
+      
 ### Configurations:
       if running requirements.txt fails try this:
             python3 -m pip install django-allauth
