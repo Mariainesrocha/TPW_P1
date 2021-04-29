@@ -14,7 +14,8 @@ Theme : Shopping Store
       > Tabs for: Hot Deals(Most sold products) / Newly Arrived(Most recent products) / Shops(List of Shops)  
 
 ### Main Features - Authenticated Customer:
-      > Sign Up and Login +  External Authentication by Google
+      > External Authentication by Google
+      > Internal Sign Up and Login 
       > Edit a user account details
       > Edit a user account address
       > Add and/or Remove Products to Cart
